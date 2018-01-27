@@ -11,6 +11,7 @@ function Outlet() {
 		target: { value: this.target },
 		color: { value: this.color },
 		size: { value: this.size },
+		sprite: { value: textures['plug'] },
 	};
 	var material = new THREE.ShaderMaterial({
 		vertexShader: shaders['outlet.vert'],

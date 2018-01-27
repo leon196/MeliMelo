@@ -12,12 +12,14 @@ function Plug () {
 		target: { value: this.target },
 		size: { value: this.size },
 		angle: { value: this.angle },
+		sprite: { value: textures['plug'] },
 	};
 	var material = new THREE.ShaderMaterial({
 		vertexShader: shaders['plug.vert'],
 		fragmentShader: shaders['plug.frag'],
 		uniforms: this.uniforms,
 		side: THREE.DoubleSide,
+		transparent: true,
 	})
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
 

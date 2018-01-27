@@ -4,6 +4,7 @@ let textureLoader = new THREE.TextureLoader();
 let textureLoaded = 0;
 let textureUrls = [
 	{ name:'cursor', url:'images/cursor.png' },
+	{ name:'plug', url:'images/plug.png' },
 ];
 let textureCount = textureUrls.length;
 
