@@ -10,7 +10,7 @@ void main ()
 	// float shade = sin((vAnchor.x*.5+.5)*3.14159);
 	// shade = 1.;
 	float alpha = 1.-abs(vAnchor.x);
-	alpha *= abs((vAnchor.y-1.)/.1);
+	alpha *= abs(abs((vAnchor.y))-1.)/.1;
 	alpha = step(.2, alpha);
 	// if (shade < .5) { discard; }
 	// shade = smoothstep(.0,.5,shade);

@@ -12,6 +12,7 @@ function Plug () {
 		target: { value: this.target },
 		size: { value: this.size },
 		angle: { value: this.angle },
+		ratio: { value: this.ratio },
 		sprite: { value: textures['plug'] },
 	};
 	var material = new THREE.ShaderMaterial({
@@ -21,6 +22,10 @@ function Plug () {
 		side: THREE.DoubleSide,
 		transparent: true,
 	})
+	// material.blending = THREE.CustomBlending;
+	// material.blendEquation = THREE.MaxEquation;
+	// material.blendSrc = THREE.SrcAlphaFactor;
+	// material.blendDst = THREE.OneMinusDstAlphaFactor;
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
 
 	this.updateUniforms = function (elapsed) {
@@ -28,6 +33,7 @@ function Plug () {
 		this.uniforms.target.value = this.target;
 		this.uniforms.size.value = this.size;
 		this.uniforms.angle.value = this.angle;
+		this.uniforms.ratio.value = this.ratio;
 	}
 }
 

@@ -12,11 +12,11 @@ window.onload = function () {
 	var scene = new THREE.Scene();
 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
 	camera.position.z = 5;
-	var cables, outlets;
+	var level;
 	var elapsed = 0;
 	var drag = false;
 	var selected = 0;
-
+	var round = 0;
 	var cursor;
 
 	load(setup);
@@ -25,22 +25,7 @@ window.onload = function () {
 
 		document.body.style.cursor = 'none';
 
-		cables = [];
-		cables.push(new Cable(10));
-		cables.push(new Cable(10));
-		cables.push(new Cable(10));
-		for (var i = 0; i < cables.length; ++i) {
-			scene.add(cables[i].mesh);
-			cables[i].move([0,0]);
-		}
-
-		outlets = [];
-		outlets.push(new Outlet());
-		// outlets.push(new Outlet());
-		// outlets[1].target =[0,1,1];
-		for (var i = 0; i < outlets.length; ++i) {
-			scene.add(outlets[i]);
-		}
+		level = generateLevel(scene, round);
 
 	 	cursor = new Cursor();
 	 	scene.add(cursor);
@@ -69,56 +54,60 @@ window.onload = function () {
 
 		cursor.setDefault();
 
-		for (var i = 0; i < cables.length; ++i) {
-			cables[i].updateUniforms(elapsed);
-			if (!drag && cables[i].hitTest(mouse)) {
+		for (var c = 0; c < level.cables.length; ++c) {
+			level.cables[c].updateUniforms(elapsed);
+			var plugs = level.cables[c].plugs;
+			for (var p = 0; p < plugs.length; ++p) {
+				var outlets = level.outlets;
+				var plugged = false;
+				for (var o = 0; o < outlets.length; ++o) {
+					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
+						plugged = true;
+						break;
+					} else {
+					}
+				}
+				if (plugged) {
+					plugs[p].ratio = Math.min(1, plugs[p].ratio + .01);
+				} else {
+					plugs[p].ratio = Math.max(0, plugs[p].ratio - .01);
+				}
+			}
+
+
+			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
+			// 	console.log("wouhou bravo");
+			// }
+
+			// hit test
+			if (!drag && level.cables[c].hitTest(mouse)) {
 				cursor.setHover();
+				// grab
 				if (Mouse.down) {
 					drag = true;
-					selected = i;
+					selected = c;
 				}
 			}
 		}
 
-		for (var o = 0; o < outlets.length; ++o) {
-			outlets[o].updateUniforms(elapsed);
-			var plugA = cables[selected].plugs[0];
-			var plugB = cables[selected].plugs[1];
-
-			if (outlets[o].hitTest(plugA.target[0], plugA.target[1], plugA.size, plugA.size)) {
-				if(!outlets[o].isFull){
-					plugA.ratio = Math.min(1, plugA.ratio + .01);
-				}
-			} else {
-				plugA.ratio = Math.max(0, plugA.ratio - .01);
-			}
-			if (outlets[o].hitTest(plugB.target[0], plugB.target[1], plugB.size, plugB.size)) {
-				if(!outlets[o].isFull){
-					plugB.ratio = Math.min(1, plugB.ratio + .01);
-				}
-			} else {
-				plugB.ratio = Math.max(0, plugB.ratio - .01);
-			}
-
-			if(plugA.ratio >= 1	&& plugB.ratio >=1){
-				console.log("wouhou bravo");
-			}
-
-			}
-
+		// drag
 		if (drag) {
 			if (Mouse.down) {
 				cursor.setGrab();
-				cables[selected].move(mouse);
-				
+				level.cables[selected].move(mouse);
+			
+			// drop
 			} else {
 				drag = false;
 			}
 		}
 
+		for (var o = 0; o < level.outlets.length; ++o) {
+			level.outlets[o].updateUniforms(elapsed);
+		}
+
 		renderer.render( scene, camera );
 		frameElapsed = elapsed;
-
 		requestAnimationFrame( update );
 	}
 

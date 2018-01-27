@@ -27,6 +27,7 @@ void main ()
 	float thin = .02;
 	pos += right * anchor.x * thin;
 	pos += forward * step(-.99, anchor.y) * thin;
+	pos -= forward * step(anchor.y, .99) * thin;
 	// pos.xy += anchor * .1;
 	pos.z = .3+anchor.y*.1;
 	gl_Position = vec4(pos, 1);
