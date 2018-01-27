@@ -83,9 +83,9 @@ function Cable (count) {
 
 		var last;
 		// follow
-		for (var i = 1; i < Math.max(this.selected, this.points.length-this.selected); i++) {
-			var leftd = this.selected - i;
-			var rightd = this.selected + i;
+		for (var i = 0; i < Math.max(this.selected, this.points.length-this.selected); i++) {
+			var leftd = this.selected - i-1;
+			var rightd = this.selected + i+1;
 			if(leftd>=0){
 				this.follow(leftd,1);
 			}
