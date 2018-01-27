@@ -19,7 +19,7 @@ window.onload = function () {
 	function setup () {
 
 		cables = [];
-		cables.push(new Cable(100));
+		cables.push(new Cable(10));
 		for (var i = 0; i < cables.length; ++i) {
 			scene.add(cables[i].mesh);
 		}
@@ -29,6 +29,8 @@ window.onload = function () {
 		document.addEventListener('keydown', Keyboard.onKeyDown);
     	document.addEventListener('keyup', Keyboard.onKeyUp);
     	document.addEventListener('mousemove', Mouse.onMove);
+    	document.addEventListener('mousedown', Mouse.onMouseDown);
+    	document.addEventListener('mouseup', Mouse.onMouseUp);
 
 		requestAnimationFrame( update );
 	}
@@ -37,13 +39,15 @@ window.onload = function () {
 
 		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
 
-		var mousex = ((Mouse.x/window.innerWidth)*2.-1.)*5;
-		var mousey = ((1.-Mouse.y/window.innerHeight)*2.-1.)*5;
+		// var mousex = ((Mouse.x/window.innerWidth)*2.-1.)*5;
+		// var mousey = ((1.-Mouse.y/window.innerHeight)*2.-1.)*5;
+		var mousex = (Mouse.x/window.innerWidth)*2.-1.;
+		var mousey = (1.-Mouse.y/window.innerHeight)*2.-1.;
 
 		elapsed += delta;
 
 		for (var i = 0; i < cables.length; ++i) {
-			cables[i].move([mousex, mousey, 0]);
+			cables[i].hitTest(Mouse.down, [mousex, mousey, 0]);
 		}
 
 		renderer.render( scene, camera );

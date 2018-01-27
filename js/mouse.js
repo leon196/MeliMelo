@@ -21,10 +21,10 @@ Mouse.onMove = function(event)
 	}
 }
 
-Mouse.onClic = function(event)
+Mouse.onMouseDown = function(event)
 {
-	Mouse.x = event.data.global.x
-	Mouse.y = event.data.global.y
+	Mouse.x = event.clientX
+	Mouse.y = event.clientY
 	Mouse.down = true
 
 	// Pan
