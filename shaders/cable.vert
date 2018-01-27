@@ -13,7 +13,7 @@ void main ()
 	vAnchor = anchor;
 	float aspect = resolution.x/resolution.y;
 	float y = anchor.y*.5+.5;
-	vec3 pos = position;//mix(position, next, y);
+	vec3 pos = mix(position, next, y);
 	// float y = anchor.y;
 	// vec3 pos = mix(position, next, max(0., anchor.y));
 	// pos = mix(pos, prev, max(0., -anchor.y));
@@ -21,8 +21,8 @@ void main ()
 	vec3 forward = normalize(next-position);
 	vec3 right = vec3(forward.y, -forward.x, 0);
 	right.x /= aspect;
-	// pos.xyz += right * anchor.x * .03;
-	pos.xy += anchor * .1;
+	pos.xyz += right * anchor.x * .03;
+	// pos.xy += anchor * .1;
 	gl_Position = vec4(pos, 1);
 	// vec2 pivot = anchor;
 	// pivot.x /= resolution.x/resolution.y;
