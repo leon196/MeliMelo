@@ -1,13 +1,20 @@
 
 function Cable (count) {
 
-	this.lineLength = .2;
+	this.lineMaxLength = .2;
+	this.lineMinLength = .15;
 	this.lineAngle = .31;
 	this.damping = .1;
+	this.hitArea = .1;
 
 	this.points = [];
+	var salt = Math.random();
 	for (var i = 0; i < count; ++i) {
-		this.points.push([i*.2, Math.sin(i*.1),0]);
+		var a = i*(.2+.1*salt);
+		var r = i*(.1+.1*salt);
+		var x = Math.cos(a)*r;
+		var y = Math.sin(a)*r;
+		this.points.push([x+salt*.1, y-salt*.1,0]);
 	}
 	
 	var attributes = {
@@ -23,7 +30,7 @@ function Cable (count) {
 		attributes.prev.array.push(this.points[prev][0], this.points[prev][1],0);
 	}
 
-	this.geometry = createGeometry(attributes, [1,1]);
+	this.geometry = createGeometry(attributes);
 
 	this.uniforms = {
 		time: { value: 0 },
@@ -40,49 +47,30 @@ function Cable (count) {
 	this.mesh = new THREE.Mesh(this.geometry, this.material);
 
 	this.selected = 0;
-	this.drag = false;
 
-	this.hitTest = function (clic, mouse) {
-		if (this.drag) {
-			if (clic) {
-				this.move(this.selected, mouse);
-			} else {
-				this.drag = false;
-			}
-		} else {
-			var hit = false;
-			for (var i = 0; i < this.points.length; ++i) {
-				var dist = distance(this.points[i][0], this.points[i][1], mouse[0], mouse[1]);
-				// console.log(dist);
-				if (dist < .1) {
-					hit = true;
-					if (clic) {
-						this.drag = true;
-						this.selected = i;
-						break;
-					}
-				}
-			}
-			if (hit) {
-				document.body.style.cursor = "pointer";
-			} else {
-				document.body.style.cursor = "default";
+	this.hitTest = function (mouse) {
+		for (var i = 0; i < this.points.length; ++i) {
+			var dist = distance(this.points[i][0], this.points[i][1], mouse[0], mouse[1]);
+			if (dist < this.hitArea) {
+				this.selected = i;
+				return true;
 			}
 		}
+		return false;
 	}
 
-	this.move = function (index, target) {
+	this.move = function (target) {
 		
 		// set selected
-		this.points[index][0] = target[0];
-		this.points[index][1] = target[1];
+		this.points[this.selected][0] = target[0];
+		this.points[this.selected][1] = target[1];
 		var array = this.geometry.attributes.position.array;
 
 		// follow
-		for (var i = this.points.length-1; i > index; --i) {
+		for (var i = this.points.length-1; i > this.selected; --i) {
 			var dist = distance(this.points[i][0], this.points[i][1], this.points[i-1][0], this.points[i-1][1]);
 			var dir = direction(this.points[i][0], this.points[i][1], this.points[i-1][0], this.points[i-1][1]);
-			if (dist > this.lineLength) {
+			if (dist > this.lineMaxLength) {
 				// var angle = Math.atan2(this.points[i-1][0] - this.points[i][0], this.points[i-1][1] - this.points[i][1]);
 				// if (i+1 < this.points.length-1) {
 				// 	var next = Math.atan2(this.points[i+1][0] - this.points[i][0], this.points[i+1][1] - this.points[i][1]);
@@ -93,28 +81,40 @@ function Cable (count) {
 				// 		dir[1] = Math.sin(a);
 				// 	}
 				// }
-				this.points[i][0] = this.points[i-1][0]-this.lineLength*dir[0]/dist;
-				this.points[i][1] = this.points[i-1][1]-this.lineLength*dir[1]/dist;
+				this.points[i][0] = this.points[i-1][0]-this.lineMaxLength*dir[0]/dist;
+				this.points[i][1] = this.points[i-1][1]-this.lineMaxLength*dir[1]/dist;
+			} else if (dist < this.lineMinLength) {
+				this.points[i][0] = this.points[i-1][0]-this.lineMinLength*dir[0]/dist;
+				this.points[i][1] = this.points[i-1][1]-this.lineMinLength*dir[1]/dist;
 			}
 		}
-		for (var i = 0; i < index; ++i) {
+		for (var i = 0; i < this.selected; ++i) {
 			var dist = distance(this.points[i][0], this.points[i][1], this.points[i+1][0], this.points[i+1][1]);
 			var dir = direction(this.points[i][0], this.points[i][1], this.points[i+1][0], this.points[i+1][1]);
-			if (dist > this.lineLength) {
-				this.points[i][0] = this.points[i+1][0]-this.lineLength*dir[0]/dist;
-				this.points[i][1] = this.points[i+1][1]-this.lineLength*dir[1]/dist;
+			if (dist > this.lineMaxLength) {
+				this.points[i][0] = this.points[i+1][0]-this.lineMaxLength*dir[0]/dist;
+				this.points[i][1] = this.points[i+1][1]-this.lineMaxLength*dir[1]/dist;
+			} else if (dist < this.lineMinLength) {
+				this.points[i][0] = this.points[i+1][0]-this.lineMinLength*dir[0]/dist;
+				this.points[i][1] = this.points[i+1][1]-this.lineMinLength*dir[1]/dist;
 			}
 		}
 
 		// update attributes
-		for (var i = 0; i < this.points.length; ++i) {
-			var next = Math.min(this.points.length-1, i+1);
-			var prev = Math.max(0, i-1);
-			for (var q = 0; q < 4; ++q) {
-				for (var p = 0; p < 3; ++p) {
-					this.geometry.attributes.position.array[(i*4+q)*3+p] = this.points[i][p];
-					this.geometry.attributes.next.array[(next*4+q)*3+p] = this.points[i][p];
-					this.geometry.attributes.prev.array[(prev*4+q)*3+p] = this.points[i][p];
+		for (var quad = 0; quad < 4; ++quad) {
+			for (var pos = 0; pos < 3; ++pos) {
+				this.geometry.attributes.next.array[quad*3+pos] = this.points[0][pos];
+				this.geometry.attributes.prev.array[quad*3+pos] = this.points[0][pos];
+			}
+		}
+		for (var point = 0; point < this.points.length; ++point) {
+			var next = Math.min(this.points.length-1, point+1);
+			var prev = Math.max(0, point-1);
+			for (var quad = 0; quad < 4; ++quad) {
+				for (var pos = 0; pos < 3; ++pos) {
+					this.geometry.attributes.position.array[(point*4+quad)*3+pos] = this.points[point][pos];
+					this.geometry.attributes.next.array[(next*4+quad)*3+pos] = this.points[point][pos];
+					this.geometry.attributes.prev.array[(prev*4+quad)*3+pos] = this.points[point][pos];
 				}
 			}
 		}

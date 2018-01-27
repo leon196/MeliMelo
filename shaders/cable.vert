@@ -12,7 +12,8 @@ void main ()
 {
 	vAnchor = anchor;
 	float aspect = resolution.x/resolution.y;
-	vec3 pos = mix(position, next, anchor.y*.5+.5);
+	float y = anchor.y*.5+.5;
+	vec3 pos = mix(position, next, y);
 	// vec3 pos = position;
 	vec3 forward = normalize(next-position);
 	vec3 right = vec3(forward.y, -forward.x, 0) / aspect;
