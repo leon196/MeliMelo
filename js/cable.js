@@ -59,46 +59,38 @@ function Cable (count) {
 		return false;
 	}
 
+	this.follow = function(pt, dir){
+		var distl = distance(this.points[pt][0], this.points[pt][1], this.points[pt+dir][0], this.points[pt+dir][1]);
+		var dirl = direction(this.points[pt][0], this.points[pt][1], this.points[pt+dir][0], this.points[pt+dir][1]);
+		if (distl > this.lineMaxLength || distl < this.lineMinLength) {
+			
+			var dist = Math.min(this.lineMaxLength , Math.max(this.lineMinLength, distl));
+			this.points[pt][0] = this.points[pt+dir][0]-dist*dirl[0]/distl;
+			this.points[pt][1] = this.points[pt+dir][1]-dist*dirl[1]/distl;
+		}
+	}
 	this.move = function (target) {
 		
 		// set selected
+		var delta = [this.points[this.selected][0]-target[0], this.points[this.selected][1]-target[1]];
+		console.log(delta);
 		this.points[this.selected][0] = target[0];
 		this.points[this.selected][1] = target[1];
 		var array = this.geometry.attributes.position.array;
 
+		var last;
 		// follow
-		for (var i = this.points.length-1; i > this.selected; --i) {
-			var dist = distance(this.points[i][0], this.points[i][1], this.points[i-1][0], this.points[i-1][1]);
-			var dir = direction(this.points[i][0], this.points[i][1], this.points[i-1][0], this.points[i-1][1]);
-			if (dist > this.lineMaxLength) {
-				// var angle = Math.atan2(this.points[i-1][0] - this.points[i][0], this.points[i-1][1] - this.points[i][1]);
-				// if (i+1 < this.points.length-1) {
-				// 	var next = Math.atan2(this.points[i+1][0] - this.points[i][0], this.points[i+1][1] - this.points[i][1]);
-				// 	var prev = Math.atan2(this.points[i-1][0] - this.points[i][0], this.points[i-1][1] - this.points[i][1]);
-				// 	if (Math.abs(next-prev) < this.lineAngle) {
-				// 		var a = Math.atan2(dir[1],dir[0]) + this.lineAngle;
-				// 		dir[0] = Math.cos(a);
-				// 		dir[1] = Math.sin(a);
-				// 	}
-				// }
-				this.points[i][0] = this.points[i-1][0]-this.lineMaxLength*dir[0]/dist;
-				this.points[i][1] = this.points[i-1][1]-this.lineMaxLength*dir[1]/dist;
-			} else if (dist < this.lineMinLength) {
-				this.points[i][0] = this.points[i-1][0]-this.lineMinLength*dir[0]/dist;
-				this.points[i][1] = this.points[i-1][1]-this.lineMinLength*dir[1]/dist;
+		for (var i = 1; i < Math.max(this.selected, this.points.length-this.selected); i++) {
+			var leftd = this.selected - i;
+			var rightd = this.selected + i;
+			if(leftd>=0){
+				this.follow(leftd,1);
+			}
+			if(rightd<this.points.length){
+				this.follow(rightd,-1);
 			}
 		}
-		for (var i = 0; i < this.selected; ++i) {
-			var dist = distance(this.points[i][0], this.points[i][1], this.points[i+1][0], this.points[i+1][1]);
-			var dir = direction(this.points[i][0], this.points[i][1], this.points[i+1][0], this.points[i+1][1]);
-			if (dist > this.lineMaxLength) {
-				this.points[i][0] = this.points[i+1][0]-this.lineMaxLength*dir[0]/dist;
-				this.points[i][1] = this.points[i+1][1]-this.lineMaxLength*dir[1]/dist;
-			} else if (dist < this.lineMinLength) {
-				this.points[i][0] = this.points[i+1][0]-this.lineMinLength*dir[0]/dist;
-				this.points[i][1] = this.points[i+1][1]-this.lineMinLength*dir[1]/dist;
-			}
-		}
+		
 
 		// update attributes
 		for (var quad = 0; quad < 4; ++quad) {
