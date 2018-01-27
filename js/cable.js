@@ -77,16 +77,16 @@ function Cable (count) {
 		
 		// set selected
 		var delta = [this.points[this.selected][0]-target[0], this.points[this.selected][1]-target[1]];
-		console.log(delta);
 		this.points[this.selected][0] = target[0];
 		this.points[this.selected][1] = target[1];
 		var array = this.geometry.attributes.position.array;
 
 		var last;
 		// follow
-		for (var i = 1; i < Math.max(this.selected, this.points.length-this.selected); i++) {
-			var leftd = this.selected - i;
-			var rightd = this.selected + i;
+		console.log(this.selected);
+		for (var i = 0; i < Math.max(this.selected, this.points.length-this.selected); i++) {
+			var leftd = this.selected - i-1;
+			var rightd = this.selected + i+1;
 			if(leftd>=0){
 				this.follow(leftd,1);
 			}
