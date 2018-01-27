@@ -21,7 +21,9 @@ void main ()
 	vec3 forward = normalize(next-position);
 	vec3 right = vec3(forward.y, -forward.x, 0);
 	right.x /= aspect;
-	pos.xyz += right * anchor.x * .03;
+	float thin = .02;
+	pos += right * anchor.x * thin;
+	pos += forward * step(.99, anchor.y) * thin;
 	// pos.xy += anchor * .1;
 	gl_Position = vec4(pos, 1);
 	// vec2 pivot = anchor;
