@@ -43,7 +43,7 @@ window.onload = function () {
 		elapsed += delta;
 
 		for (var i = 0; i < cables.length; ++i) {
-			cables[i].move({x:mousex, y:mousey});
+			cables[i].move([mousex, mousey, 0]);
 		}
 
 		renderer.render( scene, camera );
