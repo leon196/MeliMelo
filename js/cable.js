@@ -83,7 +83,6 @@ function Cable (count) {
 
 		var last;
 		// follow
-		console.log(this.selected);
 		for (var i = 0; i < Math.max(this.selected, this.points.length-this.selected); i++) {
 			var leftd = this.selected - i-1;
 			var rightd = this.selected + i+1;
