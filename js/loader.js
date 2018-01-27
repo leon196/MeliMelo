@@ -3,6 +3,7 @@ let textures = {};
 let textureLoader = new THREE.TextureLoader();
 let textureLoaded = 0;
 let textureUrls = [
+	{ name:'cursor', url:'images/cursor.png' },
 ];
 let textureCount = textureUrls.length;
 
@@ -12,6 +13,10 @@ let shaderLoaded = 0;
 let shaderUrls = [
 	{ name:'cable.frag', url:'shaders/cable.frag' },
 	{ name:'cable.vert', url:'shaders/cable.vert' },
+	{ name:'plug.frag', url:'shaders/plug.frag' },
+	{ name:'plug.vert', url:'shaders/plug.vert' },
+	{ name:'cursor.frag', url:'shaders/cursor.frag' },
+	{ name:'cursor.vert', url:'shaders/cursor.vert' },
 ];
 let shaderCount = shaderUrls.length;
 

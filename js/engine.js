@@ -11,14 +11,19 @@ window.onload = function () {
 
 	var scene = new THREE.Scene();
 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
+	camera.position.z = 5;
 	var cables;
 	var elapsed = 0;
 	var drag = false;
 	var selected = 0;
 
+	var cursor;
+
 	load(setup);
 
 	function setup () {
+
+		document.body.style.cursor = 'none';
 
 		cables = [];
 		cables.push(new Cable(10));
@@ -29,13 +34,14 @@ window.onload = function () {
 			cables[i].move([0,0]);
 		}
 
-		camera.position.z = 5;
+	 	cursor = new Cursor();
+	 	scene.add(cursor);
 
 		document.addEventListener('keydown', Keyboard.onKeyDown);
-    	document.addEventListener('keyup', Keyboard.onKeyUp);
-    	document.addEventListener('mousemove', Mouse.onMove);
-    	document.addEventListener('mousedown', Mouse.onMouseDown);
-    	document.addEventListener('mouseup', Mouse.onMouseUp);
+  	document.addEventListener('keyup', Keyboard.onKeyUp);
+  	document.addEventListener('mousemove', Mouse.onMove);
+  	document.addEventListener('mousedown', Mouse.onMouseDown);
+  	document.addEventListener('mouseup', Mouse.onMouseUp);
 
 		requestAnimationFrame( update );
 	}
@@ -50,10 +56,14 @@ window.onload = function () {
 		var mousey = (1.-Mouse.y/window.innerHeight)*2.-1.;
 		var mouse = [mousex, mousey, 0];
 
+		cursor.uniforms.mouse.value = mouse;
+
 		elapsed += delta;
+		cursor.setDefault();
 
 		if (drag) {
 			if (Mouse.down) {
+				cursor.setGrab();
 				cables[selected].move(mouse);
 			} else {
 				drag = false;
@@ -61,11 +71,12 @@ window.onload = function () {
 		} else {
 			for (var i = 0; i < cables.length; ++i) {
 				if (cables[i].hitTest(mouse)) {
+					cursor.setHover();
 					if (Mouse.down) {
 						drag = true;
 						selected = i;
-						break;
 					}
+					break;
 				}
 			}
 		}

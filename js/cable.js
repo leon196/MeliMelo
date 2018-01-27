@@ -46,6 +46,10 @@ function Cable (count) {
 
 	this.mesh = new THREE.Mesh(this.geometry, this.material);
 
+	this.plugA = new Plug();
+	this.plugB = new Plug();
+	this.mesh.add(this.plugA, this.plugB);
+
 	this.selected = 0;
 
 	this.hitTest = function (mouse) {
@@ -101,12 +105,21 @@ function Cable (count) {
 		}
 
 		// update attributes
+		var last = this.points.length-1;
 		for (var quad = 0; quad < 4; ++quad) {
 			for (var pos = 0; pos < 3; ++pos) {
 				this.geometry.attributes.next.array[quad*3+pos] = this.points[0][pos];
 				this.geometry.attributes.prev.array[quad*3+pos] = this.points[0][pos];
+				this.geometry.attributes.next.array[(last*4+quad)*3+pos] = this.points[last][pos];
+				this.geometry.attributes.prev.array[(last*4+quad)*3+pos] = this.points[last][pos];
 			}
 		}
+		
+		this.plugA.uniforms.target.value = [this.points[0][0], this.points[0][1], 0];
+		this.plugA.uniforms.angle.value = Math.atan2(this.points[1][1] - this.points[0][1], this.points[1][0] - this.points[0][0]);
+		this.plugB.uniforms.target.value = [this.points[last][0], this.points[last][1], 0];
+		this.plugB.uniforms.angle.value = Math.atan2(this.points[last-1][1] - this.points[last][1], this.points[last-1][0] - this.points[last][0]);
+
 		for (var point = 0; point < this.points.length; ++point) {
 			var next = Math.min(this.points.length-1, point+1);
 			var prev = Math.max(0, point-1);
