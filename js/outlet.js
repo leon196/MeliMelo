@@ -4,6 +4,7 @@ function Outlet() {
 	this.target = [0,-1,0];
 	this.color = [1,0,0];
 	this.size = .15;
+	this.isFull = false;
 
 	this.uniforms = {
 		time: { value: 0 },
