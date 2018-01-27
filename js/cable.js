@@ -77,7 +77,6 @@ function Cable (count) {
 		
 		// set selected
 		var delta = [this.points[this.selected][0]-target[0], this.points[this.selected][1]-target[1]];
-		console.log(delta);
 		this.points[this.selected][0] = target[0];
 		this.points[this.selected][1] = target[1];
 		var array = this.geometry.attributes.position.array;
