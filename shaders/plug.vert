@@ -2,6 +2,7 @@
 uniform vec3 target;
 uniform vec2 resolution;
 uniform float angle;
+uniform float size;
 
 varying vec2 vUv;
 
@@ -11,10 +12,11 @@ void main ()
 {
 	vUv = uv;
 	float aspect = resolution.x/resolution.y;
-	vec3 pos = position*.2;
+	vec3 pos = position*size*2.;
 	pos.xy *= rot(angle);
 	pos.x /= aspect;
 	pos = target-pos;
 	// pos *= .1;
+	pos.z = .1;
 	gl_Position = vec4(pos, 1);
 }

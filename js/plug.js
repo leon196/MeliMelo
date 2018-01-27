@@ -1,10 +1,15 @@
 
 function Plug () {
 
+	this.target = [0,0];
+	this.size = .1;
+	this.angle = 0.;
+
 	this.uniforms = {
 		resolution: { value: [window.innerWidth, window.innerHeight] },
-		target: { value: [0,0] },
-		angle: { value: 0 },
+		target: { value: this.target },
+		size: { value: this.size },
+		angle: { value: this.angle },
 	};
 	var material = new THREE.ShaderMaterial({
 		vertexShader: shaders['plug.vert'],
@@ -13,6 +18,12 @@ function Plug () {
 		side: THREE.DoubleSide,
 	})
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
+
+	this.updateUniforms = function () {
+		this.uniforms.target.value = this.target;
+		this.uniforms.size.value = this.size;
+		this.uniforms.angle.value = this.angle;
+	}
 }
 
 Plug.prototype = Object.create(THREE.Mesh.prototype)

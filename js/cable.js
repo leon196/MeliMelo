@@ -4,7 +4,7 @@ function Cable (count) {
 	this.lineMaxLength = .2;
 	this.lineMinLength = .15;
 	this.lineAngle = .31;
-	this.damping = .1;
+	this.damping = .5;
 	this.hitArea = .1;
 
 	this.points = [];
@@ -46,9 +46,8 @@ function Cable (count) {
 
 	this.mesh = new THREE.Mesh(this.geometry, this.material);
 
-	this.plugA = new Plug();
-	this.plugB = new Plug();
-	this.mesh.add(this.plugA, this.plugB);
+	this.plugs = [new Plug(), new Plug()];
+	this.mesh.add(this.plugs[0], this.plugs[1]);
 
 	this.selected = 0;
 
@@ -77,8 +76,8 @@ function Cable (count) {
 		
 		// set selected
 		var delta = [this.points[this.selected][0]-target[0], this.points[this.selected][1]-target[1]];
-		this.points[this.selected][0] = target[0];
-		this.points[this.selected][1] = target[1];
+		this.points[this.selected][0] = lerp(this.points[this.selected][0], target[0], this.damping);
+		this.points[this.selected][1] = lerp(this.points[this.selected][1], target[1], this.damping);
 		var array = this.geometry.attributes.position.array;
 
 		var last;
@@ -98,28 +97,37 @@ function Cable (count) {
 		// update attributes
 		var last = this.points.length-1;
 		for (var quad = 0; quad < 4; ++quad) {
-			for (var pos = 0; pos < 3; ++pos) {
+			// var dirPrev = direction(this.points[0][0], this.points[0][1], this.points[1][0], this.points[1][1]);
+			// var dirNext = direction(this.points[last][0], this.points[last][1], this.points[last-1][0], this.points[last-1][1]);
+			for (var pos = 0; pos < 2; ++pos) {
+				// this.geometry.attributes.prev.array[quad*3+pos] = this.points[0][pos]+dirPrev[pos];
 				this.geometry.attributes.next.array[quad*3+pos] = this.points[0][pos];
-				this.geometry.attributes.prev.array[quad*3+pos] = this.points[0][pos];
-				this.geometry.attributes.next.array[(last*4+quad)*3+pos] = this.points[last][pos];
-				this.geometry.attributes.prev.array[(last*4+quad)*3+pos] = this.points[last][pos];
 			}
 		}
-		
-		this.plugA.uniforms.target.value = [this.points[0][0], this.points[0][1], 0];
-		this.plugA.uniforms.angle.value = Math.atan2(this.points[1][1] - this.points[0][1], this.points[1][0] - this.points[0][0]);
-		this.plugB.uniforms.target.value = [this.points[last][0], this.points[last][1], 0];
-		this.plugB.uniforms.angle.value = Math.atan2(this.points[last-1][1] - this.points[last][1], this.points[last-1][0] - this.points[last][0]);
+		this.plugs[0].target = [this.points[0][0], this.points[0][1], 0];
+		this.plugs[0].angle = Math.atan2(this.points[1][1] - this.points[0][1], this.points[1][0] - this.points[0][0]);
+		this.plugs[0].updateUniforms();
+		this.plugs[1].target = [this.points[last][0], this.points[last][1], 0];
+		this.plugs[1].angle = Math.atan2(this.points[last-1][1] - this.points[last][1], this.points[last-1][0] - this.points[last][0]);
+		this.plugs[1].updateUniforms();
 
 		for (var point = 0; point < this.points.length; ++point) {
 			var next = Math.min(this.points.length-1, point+1);
 			var prev = Math.max(0, point-1);
 			for (var quad = 0; quad < 4; ++quad) {
-				for (var pos = 0; pos < 3; ++pos) {
+				for (var pos = 0; pos < 2; ++pos) {
 					this.geometry.attributes.position.array[(point*4+quad)*3+pos] = this.points[point][pos];
 					this.geometry.attributes.next.array[(next*4+quad)*3+pos] = this.points[point][pos];
 					this.geometry.attributes.prev.array[(prev*4+quad)*3+pos] = this.points[point][pos];
 				}
+			}
+		}
+		for (var quad = 0; quad < 4; ++quad) {
+			var dirPrev = direction(this.points[0][0], this.points[0][1], this.points[1][0], this.points[1][1]);
+			var dirNext = direction(this.points[last][0], this.points[last][1], this.points[last-1][0], this.points[last-1][1]);
+			for (var pos = 0; pos < 2; ++pos) {
+				// this.geometry.attributes.prev.array[quad*3+pos] = this.points[0][pos]+dirPrev[pos];
+				this.geometry.attributes.next.array[(last*4+quad)*3+pos] = this.points[last][pos]+dirNext[pos];
 			}
 		}
 		this.geometry.attributes.position.needsUpdate = true;

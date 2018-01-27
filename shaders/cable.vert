@@ -25,6 +25,7 @@ void main ()
 	pos += right * anchor.x * thin;
 	pos += forward * step(.99, anchor.y) * thin;
 	// pos.xy += anchor * .1;
+	pos.z = .3;
 	gl_Position = vec4(pos, 1);
 	// vec2 pivot = anchor;
 	// pivot.x /= resolution.x/resolution.y;

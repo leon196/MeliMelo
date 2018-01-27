@@ -12,7 +12,7 @@ window.onload = function () {
 	var scene = new THREE.Scene();
 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
 	camera.position.z = 5;
-	var cables;
+	var cables, outlets;
 	var elapsed = 0;
 	var drag = false;
 	var selected = 0;
@@ -32,6 +32,12 @@ window.onload = function () {
 		for (var i = 0; i < cables.length; ++i) {
 			scene.add(cables[i].mesh);
 			cables[i].move([0,0]);
+		}
+
+		outlets = [];
+		outlets.push(new Outlet());
+		for (var i = 0; i < outlets.length; ++i) {
+			scene.add(outlets[i]);
 		}
 
 	 	cursor = new Cursor();
@@ -65,6 +71,13 @@ window.onload = function () {
 			if (Mouse.down) {
 				cursor.setGrab();
 				cables[selected].move(mouse);
+				for (var o = 0; o < outlets.length; ++o) {
+					var plugA = cables[selected].plugs[0];
+					var plugB = cables[selected].plugs[1];
+					if (outlets[o].hitTest(plugA.target[0], plugA.target[1], plugA.size, plugA.size)) {
+						console.log('hit');
+					}
+				}
 			} else {
 				drag = false;
 			}

@@ -17,6 +17,8 @@ let shaderUrls = [
 	{ name:'plug.vert', url:'shaders/plug.vert' },
 	{ name:'cursor.frag', url:'shaders/cursor.frag' },
 	{ name:'cursor.vert', url:'shaders/cursor.vert' },
+	{ name:'outlet.frag', url:'shaders/outlet.frag' },
+	{ name:'outlet.vert', url:'shaders/outlet.vert' },
 ];
 let shaderCount = shaderUrls.length;
 
