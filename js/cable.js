@@ -21,6 +21,7 @@ function Cable (count) {
 		position: { array: [], itemSize: 3 },
 		next: { array: [], itemSize: 3 },
 		prev: { array: [], itemSize: 3 },
+		path: { array: [], itemSize: 1 },
 	}
 	for (var i = 0; i < this.points.length; ++i) {
 		var next = Math.min(this.points.length-1, i+1);
@@ -28,6 +29,7 @@ function Cable (count) {
 		attributes.position.array.push(this.points[i][0], this.points[i][1],0);
 		attributes.next.array.push(this.points[next][0], this.points[next][1],0);
 		attributes.prev.array.push(this.points[prev][0], this.points[prev][1],0);
+		attributes.path.array.push(i/(this.points.length-1));
 	}
 
 	this.geometry = createGeometry(attributes);
@@ -42,6 +44,8 @@ function Cable (count) {
 		fragmentShader: shaders['cable.frag'],
 		uniforms: this.uniforms,
 		side: THREE.DoubleSide,
+		transparent: true,
+		depthTest: false,
 	});
 
 	this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -106,10 +110,8 @@ function Cable (count) {
 		}
 		this.plugs[0].target = [this.points[0][0], this.points[0][1], 0];
 		this.plugs[0].angle = Math.atan2(this.points[1][1] - this.points[0][1], this.points[1][0] - this.points[0][0]);
-		this.plugs[0].updateUniforms();
 		this.plugs[1].target = [this.points[last][0], this.points[last][1], 0];
 		this.plugs[1].angle = Math.atan2(this.points[last-1][1] - this.points[last][1], this.points[last-1][0] - this.points[last][0]);
-		this.plugs[1].updateUniforms();
 
 		for (var point = 0; point < this.points.length; ++point) {
 			var next = Math.min(this.points.length-1, point+1);
@@ -133,5 +135,12 @@ function Cable (count) {
 		this.geometry.attributes.position.needsUpdate = true;
 		this.geometry.attributes.next.needsUpdate = true;
 		this.geometry.attributes.prev.needsUpdate = true;
+	}
+
+	this.updateUniforms = function (elapsed) {
+		this.uniforms.time.value = elapsed;
+		this.plugs.forEach(function(plug) {
+			plug.updateUniforms(elapsed);
+		});
 	}
 }

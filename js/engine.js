@@ -54,6 +54,7 @@ window.onload = function () {
 
 	function update (elapsed) {
 
+		elapsed *= .001;
 		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
 
 		// var mousex = ((Mouse.x/window.innerWidth)*2.-1.)*5;
@@ -64,14 +65,25 @@ window.onload = function () {
 
 		cursor.uniforms.mouse.value = mouse;
 
-		elapsed += delta;
 		cursor.setDefault();
+
+		for (var i = 0; i < cables.length; ++i) {
+			cables[i].updateUniforms(elapsed);
+			if (!drag && cables[i].hitTest(mouse)) {
+				cursor.setHover();
+				if (Mouse.down) {
+					drag = true;
+					selected = i;
+				}
+			}
+		}
 
 		if (drag) {
 			if (Mouse.down) {
 				cursor.setGrab();
 				cables[selected].move(mouse);
 				for (var o = 0; o < outlets.length; ++o) {
+					outlets[o].updateUniforms(elapsed);
 					var plugA = cables[selected].plugs[0];
 					var plugB = cables[selected].plugs[1];
 					if (outlets[o].hitTest(plugA.target[0], plugA.target[1], plugA.size, plugA.size)) {
@@ -80,17 +92,6 @@ window.onload = function () {
 				}
 			} else {
 				drag = false;
-			}
-		} else {
-			for (var i = 0; i < cables.length; ++i) {
-				if (cables[i].hitTest(mouse)) {
-					cursor.setHover();
-					if (Mouse.down) {
-						drag = true;
-						selected = i;
-					}
-					break;
-				}
 			}
 		}
 

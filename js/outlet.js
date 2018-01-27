@@ -6,6 +6,7 @@ function Outlet() {
 	this.size = .15;
 
 	this.uniforms = {
+		time: { value: 0 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },
 		target: { value: this.target },
 		color: { value: this.color },
@@ -22,6 +23,12 @@ function Outlet() {
 	this.hitTest = function (x, y, w, h) {
 		return x > this.target[0]-this.size && x < this.target[0]+this.size
 				&& y > this.target[1]-this.size && y < this.target[1]+this.size;
+	}
+
+	this.updateUniforms = function (elapsed) {
+		this.uniforms.time.value = elapsed;
+		this.uniforms.size.value = this.size;
+		this.uniforms.target.value = this.target;
 	}
 }
 
