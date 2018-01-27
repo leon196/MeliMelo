@@ -69,11 +69,30 @@ function Cable (count) {
 	this.follow = function(pt, dir){
 		var distl = distance(this.points[pt][0], this.points[pt][1], this.points[pt+dir][0], this.points[pt+dir][1]);
 		var dirl = direction(this.points[pt][0], this.points[pt][1], this.points[pt+dir][0], this.points[pt+dir][1]);
+		var distp = null;
+		if(pt-1>=0 && pt+1<this.points.length){
+			distp = distance(this.points[pt-1][0], this.points[pt-1][1], this.points[pt+1][0], this.points[pt+1][1]);
+		}
 		if (distl > this.lineMaxLength || distl < this.lineMinLength) {
 			
 			var dist = Math.min(this.lineMaxLength , Math.max(this.lineMinLength, distl));
-			this.points[pt][0] = this.points[pt+dir][0]-dist*dirl[0]/distl;
-			this.points[pt][1] = this.points[pt+dir][1]-dist*dirl[1]/distl;
+			if(distp !=null){
+				if(distp >0.2){
+
+				this.points[pt][0] = this.points[pt+dir][0]-dist*dirl[0]/distl;
+				this.points[pt][1] = this.points[pt+dir][1]-dist*dirl[1]/distl;
+				}
+				else{
+					console.log("pabon");
+				}
+			}
+			else{
+				this.points[pt][0] = this.points[pt+dir][0]-dist*dirl[0]/distl;
+				this.points[pt][1] = this.points[pt+dir][1]-dist*dirl[1]/distl;
+				
+			}
+
+
 		}
 	}
 	this.move = function (target) {
