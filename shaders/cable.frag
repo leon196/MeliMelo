@@ -1,7 +1,7 @@
-
+	
 uniform float time;
 uniform float ratioA;
-
+uniform float ratioB;
 varying vec2 vAnchor;
 varying float vPath;
 

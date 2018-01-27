@@ -56,7 +56,7 @@ function Cable (count) {
 
 	this.plugs = [new Plug(), new Plug()];
 	this.mesh.add(this.plugs[0], this.plugs[1]);
-
+	
 	this.selected = 0;
 
 	this.hitTest = function (mouse) {
@@ -85,9 +85,6 @@ function Cable (count) {
 
 				this.points[pt][0] = this.points[pt+dir][0]-dist*dirl[0]/distl;
 				this.points[pt][1] = this.points[pt+dir][1]-dist*dirl[1]/distl;
-				}
-				else{
-					console.log("pabon");
 				}
 			}
 			else{
@@ -163,6 +160,7 @@ function Cable (count) {
 	this.updateUniforms = function (elapsed) {
 		this.uniforms.time.value = elapsed;
 		this.uniforms.ratioA.value = this.plugs[0].ratio;
+		this.uniforms.ratioB.value = this.plugs[1].ratio;
 		this.plugs.forEach(function(plug) {
 			plug.updateUniforms(elapsed);
 		});

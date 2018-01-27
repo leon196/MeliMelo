@@ -36,6 +36,8 @@ window.onload = function () {
 
 		outlets = [];
 		outlets.push(new Outlet());
+		outlets.push(new Outlet());
+		outlets[1].target =[0,1,1];
 		for (var i = 0; i < outlets.length; ++i) {
 			scene.add(outlets[i]);
 		}
@@ -78,20 +80,37 @@ window.onload = function () {
 			}
 		}
 
+		for (var o = 0; o < outlets.length; ++o) {
+			outlets[o].updateUniforms(elapsed);
+			var plugA = cables[selected].plugs[0];
+			var plugB = cables[selected].plugs[1];
+
+			if (outlets[o].hitTest(plugA.target[0], plugA.target[1], plugA.size, plugA.size)) {
+				if(!outlets[o].isFull){
+					plugA.ratio = Math.min(1, plugA.ratio + .01);
+				}
+			} else {
+				plugA.ratio = Math.max(0, plugA.ratio - .01);
+			}
+			if (outlets[o].hitTest(plugB.target[0], plugB.target[1], plugB.size, plugB.size)) {
+				if(!outlets[o].isFull){
+					plugB.ratio = Math.min(1, plugB.ratio + .01);
+				}
+			} else {
+				plugB.ratio = Math.max(0, plugB.ratio - .01);
+			}
+
+			if(plugA.ratio >= 1	&& plugB.ratio >=1){
+				console.log("wouhou bravo");
+			}
+
+			}
+
 		if (drag) {
 			if (Mouse.down) {
 				cursor.setGrab();
 				cables[selected].move(mouse);
-				for (var o = 0; o < outlets.length; ++o) {
-					outlets[o].updateUniforms(elapsed);
-					var plugA = cables[selected].plugs[0];
-					var plugB = cables[selected].plugs[1];
-					if (outlets[o].hitTest(plugA.target[0], plugA.target[1], plugA.size, plugA.size)) {
-						plugA.ratio = Math.min(1, plugA.ratio + .01);
-					} else {
-						plugA.ratio = Math.max(0, plugA.ratio - .01);
-					}
-				}
+				
 			} else {
 				drag = false;
 			}
