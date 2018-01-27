@@ -36,8 +36,8 @@ window.onload = function () {
 
 		outlets = [];
 		outlets.push(new Outlet());
-		outlets.push(new Outlet());
-		outlets[1].target =[0,1,1];
+		// outlets.push(new Outlet());
+		// outlets[1].target =[0,1,1];
 		for (var i = 0; i < outlets.length; ++i) {
 			scene.add(outlets[i]);
 		}

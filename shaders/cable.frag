@@ -15,6 +15,7 @@ void main ()
 	// if (shade < .5) { discard; }
 	// shade = smoothstep(.0,.5,shade);
 	// float t = .5+.5*sin(time);
-	alpha *= .5+.5*step(vPath, ratioA);
+	// alpha *= .5;
+	alpha *= .5+.5*clamp(.5*step(vPath, ratioA)+.5*step(1.-vPath, ratioB), 0., 1.);
 	gl_FragColor = vec4(alpha);
 }
