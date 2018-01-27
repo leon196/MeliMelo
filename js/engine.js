@@ -87,7 +87,9 @@ window.onload = function () {
 					var plugA = cables[selected].plugs[0];
 					var plugB = cables[selected].plugs[1];
 					if (outlets[o].hitTest(plugA.target[0], plugA.target[1], plugA.size, plugA.size)) {
-						console.log('hit');
+						plugA.ratio = Math.min(1, plugA.ratio + .01);
+					} else {
+						plugA.ratio = Math.max(0, plugA.ratio - .01);
 					}
 				}
 			} else {

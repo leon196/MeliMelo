@@ -4,6 +4,7 @@ function Plug () {
 	this.target = [0,0];
 	this.size = .1;
 	this.angle = 0.;
+	this.ratio = 0.;
 
 	this.uniforms = {
 		time: { value: 0 },

@@ -36,6 +36,10 @@ function Cable (count) {
 
 	this.uniforms = {
 		time: { value: 0 },
+		colorA: { value: [1,1,1] },
+		colorB: { value: [1,1,1] },
+		ratioA: { value: 0 },
+		ratioB: { value: 0 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },
 	};
 
@@ -158,6 +162,7 @@ function Cable (count) {
 
 	this.updateUniforms = function (elapsed) {
 		this.uniforms.time.value = elapsed;
+		this.uniforms.ratioA.value = this.plugs[0].ratio;
 		this.plugs.forEach(function(plug) {
 			plug.updateUniforms(elapsed);
 		});
