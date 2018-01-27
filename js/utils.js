@@ -15,3 +15,7 @@ function distance (ax,ay,bx,by) {
 function direction (ax,ay,bx,by) {
 	return [bx-ax, by-ay];
 }
+
+function directionNorm (ax,ay,bx,by) {
+	return [bx-ax/Math.sqrt((ax-bx)*(ax-bx)+(ay-by)*(ay-by)), by-ay/Math.sqrt((ax-bx)*(ax-bx)+(ay-by)*(ay-by))];
+}
