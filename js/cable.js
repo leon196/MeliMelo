@@ -105,7 +105,7 @@ function Cable (count) {
 	}
 
 		this.checkCollision = function(cables){
-			var seuil = 0.01;
+			var seuil = 0.05;
 
 			for( var i = 0; i<cables.length; i++){ // Tous les cables
 
@@ -119,9 +119,9 @@ function Cable (count) {
 							//console.log("not me !")
 							var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
 							if( d < seuil){
-								console.log(d);
-								
+
 								console.log("colidation");
+
 								// return index cable + coordonnées points à bouger
 							}
 						}
