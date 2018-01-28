@@ -12,7 +12,7 @@ void main ()
 {
 	vAnchor = uv*2.-1.;
 	float aspect = resolution.x/resolution.y;
-	vec3 pos = position*size*4.;
+	vec3 pos = position*size*2.;
 	pos.xy *= rot(angle);
 	pos.x /= aspect;
 	pos = target-pos;

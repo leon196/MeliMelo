@@ -14,8 +14,6 @@ window.onload = function () {
 	camera.position.z = 5;
 	var level;
 	var elapsed = 0;
-	var drag = false;
-	var selected = 0;
 	var round = 0;
 	var cursor;
 
@@ -59,25 +57,38 @@ window.onload = function () {
 		cursor.setDefault();
 
 		var colliding = [];
-		if (drag) {
+		if (cursor.drag) {
 			if (Mouse.down) {
 				cursor.setGrab();
-				level.cables[selected].move(mouse);
+				level.cables[cursor.selected].move(mouse, delta);
 				// level.cables[selected].checkCollision(level.cables);
 			
 			} else {
-				drag = false;
+				cursor.drag = false;
 			}
 		}
 
 		for (var c = 0; c < level.cables.length; ++c) {
-			level.cables[c].update(elapsed);
+
+			// hit test
+			var pointSelected = level.cables[c].hitTest(mouse);
+			if (!cursor.drag && pointSelected != -1) {
+				cursor.setHover();
+				// grab
+				if (Mouse.down) {
+					cursor.drag = true;
+					cursor.selected = c;
+					level.cables[c].selected = pointSelected;
+				}
+			}
+			
 			var plugs = level.cables[c].plugs;
 
 			for (var p = 0; p < plugs.length; ++p) {
 				var outlets = level.outlets;
 
 				var plugged = false;
+<<<<<<< HEAD
 
 				for (var o = 0; o < outlets.length; ++o) {
 					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
@@ -85,6 +96,13 @@ window.onload = function () {
 						outlets[o].addNeighBor(level.cables[c].getOtherSide(plugs[p]));
 						plugs[p].outlet = outlets[o];
 
+=======
+				var outletTarget = [0,0,0];
+				for (var o = 0; o < outlets.length; ++o) {
+					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
+						plugged = true;
+						outletTarget = outlets[o].target;
+>>>>>>> origin/master
 						break;
 					} else {
 						if(outlets[o].neighbors != []){
@@ -100,13 +118,23 @@ window.onload = function () {
 
 				if (plugged) {
 					plugs[p].ratio = Math.min(1, plugs[p].ratio + .01);
+<<<<<<< HEAD
 
 
+=======
+					var points = level.cables[c].points;
+					var index = p*(points.length-1);
+					// level.cables[c].move(outletTarget, delta);
+					points[index][0] = lerp(points[index][0], outletTarget[0], .1);
+					points[index][1] = lerp(points[index][1], outletTarget[1], .1);
+					// level.cables[c].selected = index;
+>>>>>>> origin/master
 				} else {
 					plugs[p].ratio = Math.max(0, plugs[p].ratio - .01);
 				}
 			}
 
+<<<<<<< HEAD
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
 			// }
@@ -124,6 +152,13 @@ window.onload = function () {
 
 
 			
+=======
+			level.cables[c].update(elapsed, delta);
+
+			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
+			// 	console.log("wouhou bravo");
+			// }
+>>>>>>> origin/master
 		}
 
 		for (var o = 0; o < level.outlets.length; ++o) {

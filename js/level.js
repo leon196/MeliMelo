@@ -3,7 +3,11 @@ function generateLevel (scene, round) {
 
 	var cables = [];
 	var lineLength = 30 + round;
+<<<<<<< HEAD
 	var cableCount = 2 + round;
+=======
+	var cableCount = 3 + round;
+>>>>>>> origin/master
 	for (var c = 0; c < cableCount; ++c) {
 		cables.push(new Cable(lineLength+Math.round(Math.random()*(3+round))));
 	}

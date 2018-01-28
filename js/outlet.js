@@ -3,7 +3,7 @@ function Outlet() {
 
 	this.target = [0,-1,0];
 	this.color = [1,0,0];
-	this.size = .15;
+	this.size = .1;
 	this.isFull = false;
 	this.neighbors = [];
 	this.uniforms = {
@@ -22,6 +22,10 @@ function Outlet() {
 		transparent: true,
 		depthTest: false,
 	})
+	material.blending = THREE.CustomBlending;
+	material.blendEquation = THREE.AddEquation;
+	material.blendSrc = THREE.SrcAlphaFactor;
+	material.blendDst = THREE.OneFactor;
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
 
 	this.hitTestBox = function (x, y, w, h) {
@@ -40,7 +44,7 @@ function Outlet() {
 	}
 	this.hitTestCircle = function (x, y, size) {
 		var dist = distance(x,y,this.target[0],this.target[1]);
-		return dist < this.size;
+		return dist < this.size + size;
 	}
 
 	this.updateUniforms = function (elapsed) {

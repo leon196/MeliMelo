@@ -2,7 +2,7 @@
 function Plug () {
 
 	this.target = [0,0];
-	this.size = .1;
+	this.size = .05;
 	this.angle = 0.;
 	this.ratio = 0.;
 	this.outlet = null;
@@ -40,3 +40,4 @@ function Plug () {
 
 Plug.prototype = Object.create(THREE.Mesh.prototype)
 Plug.prototype.constructor = Plug
+
