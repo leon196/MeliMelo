@@ -4,6 +4,8 @@ Mouse.x = 0
 Mouse.y = 0
 Mouse.down = false
 
+Mouse.lastX = 0
+Mouse.lastY = 0
 Mouse.panX = 0
 Mouse.panY = 0
 Mouse.panStartX = 0
@@ -12,6 +14,8 @@ Mouse.panStarted = false
 
 Mouse.onMove = function(event)
 {
+	Mouse.lastX = Mouse.x;
+	Mouse.lastY = Mouse.y;
 	Mouse.x = event.clientX
 	Mouse.y = event.clientY
 	if (Mouse.panStarted)
