@@ -2,7 +2,7 @@
 function Cable () {
 
 	this.lineMaxLength = .05;
-	this.lineMinLength = .025;
+	this.lineMinLength = .04;
 	this.minAngle = Math.PI*.8;
 	this.damping = .5;
 	this.hitArea = this.lineMaxLength;
@@ -143,11 +143,14 @@ function Cable () {
 			var dir = direction(pointNext[0],pointNext[1],point[0],point[1]);
 			var dist = distance(pointNext[0],pointNext[1],point[0],point[1]);
 			var angle = Math.atan2(dir[1]/dist, dir[0]/dist);
-			dir[0] = Math.cos(angle+Math.sin(elapsed*3.)*.5);
-			dir[1] = Math.sin(angle+Math.sin(elapsed*3.)*.5);
-			// this.lineMaxLength *= 1.-ratio*.01;
-			// this.lineMinLength *= 1.-ratio*.01;
+			dir[0] = Math.cos(angle+Math.sin(elapsed)*.3);
+			dir[1] = Math.sin(angle+Math.sin(elapsed)*.3);
 			this.moveAt(0, [point[0]+dir[0]*speed, point[1]+dir[1]*speed, 0], delta);
+
+			// this.moveAt(0, [point[0]+dir[0]*speed, point[1]+dir[1]*speed, 0], delta);
+			this.plugs.forEach(function(plug){
+				plug.size = .05+.01*Math.sin(elapsed*6.);
+			})
 	}
 
 	this.clamp = function (index) {
@@ -236,6 +239,14 @@ function Cable () {
 		this.uniforms.ratioB.value = this.plugs[1].ratio;
 		this.plugs.forEach(function(plug) {
 			plug.updateUniforms(elapsed);
+		});
+	}
+
+	this.resize = function(width, height) {
+		this.uniforms.resolution.value[0] = width;
+		this.uniforms.resolution.value[1] = height;
+		this.plugs.forEach(function(plug) {
+			plug.resize(width, height);
 		});
 	}
 }

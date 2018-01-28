@@ -30,6 +30,11 @@ function Cursor () {
 	this.setGrab = function () {
 		this.uniforms.cursorState.value = 2;
 	}
+
+	this.resize = function(width, height) {
+		this.uniforms.resolution.value[0] = width;
+		this.uniforms.resolution.value[1] = height;
+	}
 }
 
 Cursor.prototype = Object.create(THREE.Mesh.prototype)

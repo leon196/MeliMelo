@@ -19,7 +19,7 @@ window.onload = function () {
 	var transitionIn = false;
 	var transitionOut = false;
 	var transitionDelayIn = 1.;
-	var transitionDelay = 5.;
+	var transitionDelay = 10;
 	var transitionStart = 0.;
 
 	load(setup);
@@ -30,17 +30,21 @@ window.onload = function () {
 
 		level = generateLevel(scene, round);
 
-	 	cursor = new Cursor();
-	 	scene.add(cursor);
+		cursor = new Cursor();
+		scene.add(cursor);
 
-	 	ui = new UI();
-	 	scene.add(ui);
+		ui = new UI();
+		scene.add(ui);
 
 		document.addEventListener('keydown', Keyboard.onKeyDown);
-	  	document.addEventListener('keyup', Keyboard.onKeyUp);
-	  	document.addEventListener('mousemove', Mouse.onMove);
-	  	document.addEventListener('mousedown', Mouse.onMouseDown);
-	  	document.addEventListener('mouseup', Mouse.onMouseUp);
+		document.addEventListener('keyup', Keyboard.onKeyUp);
+		document.addEventListener('mousemove', Mouse.onMove);
+		document.addEventListener('mousedown', Mouse.onMouseDown);
+		document.addEventListener('mouseup', Mouse.onMouseUp);
+		document.addEventListener('touchmove', Mouse.onTouchMove);
+		document.addEventListener('touchstart', Mouse.onTouchDown);
+		document.addEventListener('touchend', Mouse.onTouchUp);
+		window.addEventListener('resize', resize, false);
 
 		requestAnimationFrame( update );
 	}
@@ -150,13 +154,13 @@ window.onload = function () {
 					var s = 0;
 					var count = cursor.selecteds.length;
 					cursor.selecteds.forEach(function(selected){
-						var x = .01*Math.cos(2*Math.PI*s/count);
-						var y = .01*Math.sin(2*Math.PI*s/count);
+						var x = .03*Math.cos(2*Math.PI*s/count);
+						var y = .03*Math.sin(2*Math.PI*s/count);
 						level.cables[selected].move([mouse[0]+x,mouse[1]+y,0], delta);
 						++s;
 					})
 					// level.cables[selected].checkCollision(level.cables);
-				
+
 				} else {
 					cursor.drag = false;
 					cursor.selecteds = [];
@@ -268,5 +272,21 @@ window.onload = function () {
 		renderer.render( scene, camera );
 		frameElapsed = elapsed;
 		requestAnimationFrame( update );
+	}
+
+	function resize () {
+		var width = window.innerWidth;
+		var height = window.innerHeight;
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+		renderer.setSize( width, height );
+		level.cables.forEach(function(cable){
+			cable.resize(width, height);
+		});
+		level.outlets.forEach(function(outlet){
+			outlet.resize(width, height);
+		});
+		cursor.resize(width, height);
+		ui.resize(width, height);
 	}
 }

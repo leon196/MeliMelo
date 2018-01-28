@@ -37,6 +37,11 @@ function Plug () {
 		this.uniforms.angle.value = this.angle;
 		this.uniforms.ratio.value = this.ratio;
 	}
+
+	this.resize = function(width, height) {
+		this.uniforms.resolution.value[0] = width;
+		this.uniforms.resolution.value[1] = height;
+	}
 }
 
 Plug.prototype = Object.create(THREE.Mesh.prototype)

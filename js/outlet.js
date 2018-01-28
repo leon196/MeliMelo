@@ -47,13 +47,18 @@ function Outlet() {
 	}
 	this.hitTestCircle = function (x, y, size) {
 		var dist = distance(x,y,this.target[0],this.target[1]);
-		return dist < this.size + size;
+		return dist < this.size;
 	}
 
 	this.updateUniforms = function (elapsed) {
 		this.uniforms.time.value = elapsed;
 		this.uniforms.size.value = this.size;
 		this.uniforms.target.value = this.target;
+	}
+
+	this.resize = function(width, height) {
+		this.uniforms.resolution.value[0] = width;
+		this.uniforms.resolution.value[1] = height;
 	}
 }
 
