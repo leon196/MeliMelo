@@ -22,9 +22,14 @@ function Outlet() {
 	})
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
 
-	this.hitTest = function (x, y, w, h) {
+	this.hitTestBox = function (x, y, w, h) {
 		return x > this.target[0]-this.size && x < this.target[0]+this.size
 				&& y > this.target[1]-this.size && y < this.target[1]+this.size;
+	}
+
+	this.hitTestCircle = function (x, y, size) {
+		var dist = distance(x,y,this.target[0],this.target[1]);
+		return dist < this.size;
 	}
 
 	this.updateUniforms = function (elapsed) {

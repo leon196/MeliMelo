@@ -1,11 +1,11 @@
 
 function Cable (count) {
 
-	this.lineMaxLength = .2;
-	this.lineMinLength = .15;
+	this.lineMaxLength = .1;
+	this.lineMinLength = .05;
 	this.lineAngle = .31;
 	this.damping = .5;
-	this.hitArea = .1;
+	this.hitArea = .05;
 
 	this.points = [];
 	var salt = Math.random();
@@ -62,7 +62,9 @@ function Cable (count) {
 	this.hitTest = function (mouse) {
 		for (var i = 0; i < this.points.length; ++i) {
 			var dist = distance(this.points[i][0], this.points[i][1], mouse[0], mouse[1]);
-			if (dist < this.hitArea) {
+			var area = this.hitArea;
+			// area += (i==0||i==this.points.length-1)?0:this.plugs[0].size;
+			if (dist < area) {
 				this.selected = i;
 				return true;
 			}
