@@ -15,8 +15,7 @@ function Cable () {
 
 	this.uniforms = {
 		time: { value: 0 },
-		colorA: { value: [1,1,1] },
-		colorB: { value: [1,1,1] },
+		alpha: { value: 1 },
 		ratioA: { value: 0 },
 		ratioB: { value: 0 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },
@@ -153,6 +152,20 @@ function Cable () {
 	this.slide = function (velocity) {
 		this.velocity[0] += velocity[0] * this.velocitySpeed;
 		this.velocity[1] += velocity[1] * this.velocitySpeed;
+	}
+
+	this.swing = function (elapsed, delta) {
+			var point = this.points[0];
+			var pointNext = this.points[1];
+			var speed = .05;
+			var dir = direction(pointNext[0],pointNext[1],point[0],point[1]);
+			var dist = distance(pointNext[0],pointNext[1],point[0],point[1]);
+			var angle = Math.atan2(dir[1]/dist, dir[0]/dist);
+			dir[0] = Math.cos(angle+Math.sin(elapsed*3.)*.5);
+			dir[1] = Math.sin(angle+Math.sin(elapsed*3.)*.5);
+			// this.lineMaxLength *= 1.-ratio*.01;
+			// this.lineMinLength *= 1.-ratio*.01;
+			this.moveAt(0, [point[0]+dir[0]*speed, point[1]+dir[1]*speed, 0], delta);
 	}
 
 	this.clamp = function (index) {

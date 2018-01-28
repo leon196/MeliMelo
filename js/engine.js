@@ -15,7 +15,9 @@ window.onload = function () {
 	camera.position.z = 5;
 	var level, cursor, ui;
 	var round = 0;
-	var transition = false;
+	var transitionIn = false;
+	var transitionOut = false;
+	var transitionDelayIn = 1.;
 	var transitionDelay = 5.;
 	var transitionStart = 0.;
 
@@ -63,16 +65,40 @@ window.onload = function () {
 		cursor.uniforms.mouse.value = mouse;
 		cursor.setDefault();
 		
-		if (transition && transitionStart + transitionDelay < elapsed) {
-			transition = false;
+		if (transitionOut && transitionStart + transitionDelay < elapsed) {
+			transitionOut = false;
+			transitionIn = true;
+			transitionStart = elapsed;
 			resetLevel(scene, level);
 			round += 1;
 			level = generateLevel(scene, round);
 		}
+		
+		if (transitionIn && transitionStart + transitionDelayIn < elapsed) {
+			transitionIn = false;
+		}
+		
+		if (transitionIn && transitionStart + transitionDelayIn > elapsed) {
+			var ratio = Math.max(0, Math.min(1, (elapsed-transitionStart)/transitionDelayIn));
+			level.outlets.forEach(function(outlet){
+				outlet.updateUniforms(elapsed);
+				outlet.uniforms.alpha.value = ratio;
+			})
+			level.cables.forEach(function(cable){
+				cable.update(elapsed, delta);
+				cable.updatePlugs();
+				cable.updateGeometry();
+				cable.updateUniforms(elapsed);
+				cable.uniforms.alpha.value = ratio;
+				cable.plugs.forEach(function(plug){
+					plug.uniforms.alpha.value = ratio;
+				});
+			})
+		}
 
-		if (transition == false) {
+		if (transitionIn == false && transitionOut == false) {
 			if (Keyboard.Space.down) {
-				transition = true;
+				transitionOut = true;
 				transitionStart = elapsed;
 				Keyboard.Space.down = false;
 			}
@@ -154,24 +180,23 @@ window.onload = function () {
 			}
 		}
 		
-		if (transition && transitionStart + transitionDelay > elapsed) {
+		if (transitionOut && transitionStart + transitionDelay > elapsed) {
 			var ratio = Math.max(0, Math.min(1, (elapsed-transitionStart)/transitionDelay));
+			var fadeOut = 1.-smoothstep(.9,1.,ratio);
 			level.outlets.forEach(function(outlet){
 				outlet.updateUniforms(elapsed);
-				outlet.uniforms.size.value = outlet.size * (1.-ratio);
+				// outlet.uniforms.size.value = outlet.size * (1.-ratio);
+				outlet.uniforms.alpha.value = fadeOut;
 			})
 			level.cables.forEach(function(cable){
-				var point = cable.points[0];
-				var pointNext = cable.points[1];
-				var speed = .05;
-				var dir = direction(pointNext[0],pointNext[1],point[0],point[1]);
-				var dist = distance(pointNext[0],pointNext[1],point[0],point[1]);
-				// cable.lineMaxLength *= 1.-ratio*.01;
-				// cable.lineMinLength *= 1.-ratio*.01;
-				cable.moveAt(0, [point[0]+dir[0]/dist*speed, point[1]+dir[1]/dist*speed, 0], delta);
+				cable.swing(elapsed, delta);
 				cable.updatePlugs();
 				cable.updateGeometry();
 				cable.updateUniforms(elapsed);
+				cable.uniforms.alpha.value = fadeOut;
+				cable.plugs.forEach(function(plug){
+					plug.uniforms.alpha.value = 1.-smoothstep(.8,.99,ratio);
+				});
 			})
 		}
 

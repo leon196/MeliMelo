@@ -8,6 +8,7 @@ function Outlet() {
 	this.neighbors = [];
 	this.uniforms = {
 		time: { value: 0 },
+		alpha: { value: 1 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },
 		target: { value: this.target },
 		color: { value: this.color },
