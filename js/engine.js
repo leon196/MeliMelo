@@ -93,21 +93,13 @@ window.onload = function () {
 				var outlets = level.outlets;
 
 				var plugged = false;
-<<<<<<< HEAD
-
-				for (var o = 0; o < outlets.length; ++o) {
-					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
-						plugged = true;
-						outlets[o].addNeighBor(level.cables[c].getOtherSide(plugs[p]));
-						plugs[p].outlet = outlets[o];
-
-=======
 				var outletTarget = [0,0,0];
 				for (var o = 0; o < outlets.length; ++o) {
 					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
 						plugged = true;
 						outletTarget = outlets[o].target;
->>>>>>> origin/master
+						outlets[o].addNeighBor(level.cables[c].getOtherSide(plugs[p]));
+						plugs[p].outlet = outlets[o];
 						break;
 					} else {
 						if(outlets[o].neighbors != []){
@@ -123,47 +115,26 @@ window.onload = function () {
 
 				if (plugged) {
 					plugs[p].ratio = Math.min(1, plugs[p].ratio + .01);
-<<<<<<< HEAD
-
-
-=======
 					var points = level.cables[c].points;
 					var index = p*(points.length-1);
 					// level.cables[c].move(outletTarget, delta);
 					points[index][0] = lerp(points[index][0], outletTarget[0], .1);
 					points[index][1] = lerp(points[index][1], outletTarget[1], .1);
 					// level.cables[c].selected = index;
->>>>>>> origin/master
 				} else {
 					plugs[p].ratio = Math.max(0, plugs[p].ratio - .01);
 				}
 			}
 
-<<<<<<< HEAD
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
 			// }
 
-			// hit test
-			if (!drag && level.cables[c].hitTest(mouse)) {
-				cursor.setHover();
-				// grab
-				if (Mouse.down) {
-					drag = true;
-					selected = c;
-				}
-			}
-
-
-
-			
-=======
 			level.cables[c].update(elapsed, delta);
 
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
 			// }
->>>>>>> origin/master
 		}
 
 		for (var o = 0; o < level.outlets.length; ++o) {
