@@ -35,16 +35,15 @@ function Outlet() {
 	}
 
 	this.addNeighBor = function(nb){
-		//console.log(this.neighbors)
 		if(nb != null && nb != this.num && this.neighbors.indexOf(nb)==-1){
 			this.neighbors.push(nb);
-			console.log("voisins de "+this.num+":" + this.neighbors);
-			console.log('added neighbor' + nb + "to " + this.num);
 		}
 	}
 	this.rmNeighBor = function(nb){
 		var i = this.neighbors.indexOf(nb);
-		this.neighbors.splice(i,1);
+		if (i != -1) {
+			this.neighbors.splice(i,1);
+		}
 	}
 	this.hitTestCircle = function (x, y, size) {
 		var dist = distance(x,y,this.target[0],this.target[1]);

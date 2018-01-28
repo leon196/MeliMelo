@@ -17,7 +17,7 @@ function Cursor () {
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
 
 	this.drag = false;
-	this.selected = -1;
+	this.selecteds = [];
 
 	this.setDefault = function () {
 		this.uniforms.cursorState.value = 0;
