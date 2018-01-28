@@ -123,6 +123,7 @@ window.onload = function () {
 
 		}
 		
+
 		if (transitionIn && transitionStart + transitionDelayIn < elapsed) {
 			transitionIn = false;
 		}
@@ -192,19 +193,35 @@ window.onload = function () {
 						if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
 							plugged = true;
 							outletTarget = outlets[o].target;
-							outlets[o].addNeighBor(plugs[1-p].outlet);
+							if(plugs[1-p].outlet != null){
+								outlets[o].addNeighBor(plugs[1-p].outlet);
+								outlets[plugs[1-p].outlet].addNeighBor(o);
+							}
 							if(plugs[p].outlet != o){
 								plugs[p].outlet = o;
-								
+								console.log("this is" + o);
 								var connexions = checkGlobalConnexion(o, outlets);
 								if(connexions.length == outlets.length){
 									win = true;
+								}
+								for(var x=0; x<outlets.length; x++){
+									console.log("Voisins de "+ x + "=" + outlets[x].neighbors);
 								}
 							}
 						} else {
 							if(plugs[p].outlet == o){
 								plugs[p].outlet = null;
-								outlets[o].rmNeighBor(plugs[1-p].outlet);
+								if(plugs[1-p].outlet != null){
+									outlets[o].rmNeighBor(plugs[1-p].outlet);
+									outlets[plugs[1-p].outlet].rmNeighBor(o);
+								}
+							}
+						}
+					}
+					for (var o = 0; o < outlets.length; ++o) {
+						for (var n =0; n< outlets[o].neighbors.lenght; n++){
+							if(outlets[outlets[o].neighbors[n]].neighbors.indexOf(o) == -1){
+								outlets[o].rmNeighBor(outlets[o].neighbors[n]);
 							}
 						}
 					}
@@ -223,10 +240,12 @@ window.onload = function () {
 				}
 
 
+
 				level.cables[c].updatePlugs();
 				level.cables[c].updateGeometry();
 				level.cables[c].updateUniforms(elapsed);
 			}
+
 
 			for (var o = 0; o < level.outlets.length; ++o) {
 				level.outlets[o].updateUniforms(elapsed);
