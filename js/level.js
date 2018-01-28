@@ -38,3 +38,12 @@ function generateLevel (scene, round) {
 
 	return { cables: cables, outlets: outlets };
 }
+
+function resetLevel (scene, level) {
+	level.cables.forEach(function(cable){
+		scene.remove(cable.mesh);
+	})
+	level.outlets.forEach(function(outlet){
+		scene.remove(outlet);
+	})
+}
