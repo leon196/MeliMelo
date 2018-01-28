@@ -86,6 +86,7 @@ function Cable (count) {
 
 	this.getOtherSide = function(plug1){ // return outlet opposée ou null si pas plugged
 		if(plug1 == this.plugs[0]){
+
 			return this.plugs[1].outlet;
 		}
 		else{
@@ -124,25 +125,6 @@ function Cable (count) {
 				dir = [Math.cos(lerp(angleCP, angleCP+delta*sns*speed, .1)), Math.sin(lerp(angleCP, angleCP+delta*sns*speed, .1))];
 				prev[0] = center[0] + dir[0] * distCP;
 				prev[1] = center[1] + dir[1] * distCP;
-			}
-		}
-	}
-
-	this.checkCollision = function(cables){
-		var seuil = 0.05;
-		for( var i = 0; i<cables.length; i++){ // Tous les cables
-			if(cables[i] != this){
-				for  (var j= 0; j < this.points.length-1; j++){ // Tous mes points
-					for (var k= 0; k < cables[i].points.length; k++){ // Tous les points de c
-						var distM = distance(this.points[j][0], this.points[j][1], this.points[j+1][0], this.points[j+1][1]);
-						var centre = [distM*this.points[j][0], distM*this.points[j][1]];
-						var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
-						if( d < seuil){
-							console.log("colidation");
-							// return index cable + coordonnées points à bouger
-						}
-					}
-				}	
 			}
 		}
 	}

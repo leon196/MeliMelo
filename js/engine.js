@@ -39,15 +39,54 @@ window.onload = function () {
 		requestAnimationFrame( update );
 	}
 
-	function checkGlobalConnexion(start, connected){
-		connected.push(start);
-		for(var i = 0; i< start.neighbors.length; i++){
-			if(connected.indexOf(start.neighbors[i]) == -1){
-				connected = checkGlobalConnexion(start.neighbors[i], connected);
+	function checkGlobalConnexion(start, outlets){
+		var toVisit = [];
+		toVisit.push(start);
+		var visited = [];
+		var connected = [];
+		var visiting = null;
+		while(toVisit.length > 1){
+			console.log("tovisit: "+toVisit);
+			visiting = toVisit[toVisit.length-1];
+				toVisit.pop();
+				console.log("visiting " + visiting);
+				if(connected.indexOf(visiting) == -1){
+					connected.push(visiting);
+					console.log("added connected "+connected);
+				}
+				visited.push(visiting);
+				console.log(outlets[visiting].neighbors);
+				for(var i =0; i< outlets[visiting].neighbors.length; i++){
+					var neighborNum = outlets[visiting].neighbors[i].num
+					console.log("voissin="+ neighborNum);
+					if(visited.indexOf(neighborNum) == -1){
+						toVisit.push(neighborNum);
+						console.log("added "+neighborNum+" to visit");
+					}
+				}
 			}
 		}
-		return connected;
+		return connected
 	}
+	function checkCollision(cables, selected){
+		var seuil = 0.05;
+		for( var i = 0; i<cables.length; i++){ // Tous les cables
+			if(i != selected){
+				for  (var j= 0; j < cables[selected].points.length-1; j++){ // Tous mes points
+					for (var k= 0; k < cables[i].points.length; k++){ // Tous les points de c
+						var distM = distance(cables[selected].points[j][0], cables[selected].points[j][1], cables[selected].points[j+1][0], cables[selected].points[j+1][1]);
+						var centre = [distM*cables[selected].points[j][0], distM*cables[selected].points[j][1]];
+						var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
+						if( d < seuil){
+							console.log("colidation");
+							// return index cable + coordonnées points à bouger
+						}
+					}
+				}	
+			}
+		}
+	}
+
 	function update (elapsed) {
 
 		elapsed *= .01;
@@ -65,7 +104,8 @@ window.onload = function () {
 			if (Mouse.down) {
 				cursor.setGrab();
 				level.cables[cursor.selected].move(mouse, delta);
-				// level.cables[selected].checkCollision(level.cables);
+				//checkCollision(level.cables, cursor.selected);
+				
 			
 			} else {
 				cursor.drag = false;
@@ -95,22 +135,31 @@ window.onload = function () {
 				var plugged = false;
 				var outletTarget = [0,0,0];
 				for (var o = 0; o < outlets.length; ++o) {
+					
 					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
 						plugged = true;
 						outletTarget = outlets[o].target;
-						outlets[o].addNeighBor(level.cables[c].getOtherSide(plugs[p]));
-						plugs[p].outlet = outlets[o];
-						break;
+						outlets[o].addNeighBor(plugs[1-p].outlet);
+						plugs[p].outlet = o;
+						//if(plugs[p].outlet != o){
+							console.log("new connexion");
+							
+							var connexions = checkGlobalConnexion(o, outlets);
+							if(connexions.length == outlets.length){
+								console.log("ON a gagné !!! ");
+							}
+							console.log("connexions depuis:" + outlets[o].num + ":" + connexions);
+						//}
+
+						//break;
 					} else {
-						if(outlets[o].neighbors != []){
-							outlets[o].rmNeighBor(level.cables[c].getOtherSide(plugs[p]));
+						if(plugs[p].outlet == o){
+							plugs[p].outlet = null;
+							outlets[o].rmNeighBor(plugs[1-p].outlet);
 						}
-						plugs[p].outlet = null;
+							
+						
 					}
-				}
-				var connexions = checkGlobalConnexion(outlets[0], []);
-				if(connexions.length == outlets.length){
-					console.log("ON a gagné !!! ");
 				}
 
 				if (plugged) {
