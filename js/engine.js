@@ -41,21 +41,28 @@ window.onload = function () {
 
 	function update (elapsed) {
 
-		elapsed *= .001;
+		elapsed *= .01;
 		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
-
-		// var mousex = ((Mouse.x/window.innerWidth)*2.-1.)*5;
-		// var mousey = ((1.-Mouse.y/window.innerHeight)*2.-1.)*5;
 		var mousex = (Mouse.x/window.innerWidth)*2.-1.;
 		var mousey = (1.-Mouse.y/window.innerHeight)*2.-1.;
 		var mouse = [mousex, mousey, 0];
-
 		cursor.uniforms.mouse.value = mouse;
-
 		cursor.setDefault();
 
+		var colliding = [];
+		if (drag) {
+			if (Mouse.down) {
+				cursor.setGrab();
+				level.cables[selected].move(mouse);
+				// level.cables[selected].checkCollision(level.cables);
+			
+			} else {
+				drag = false;
+			}
+		}
+
 		for (var c = 0; c < level.cables.length; ++c) {
-			level.cables[c].updateUniforms(elapsed);
+			level.cables[c].update(elapsed);
 			var plugs = level.cables[c].plugs;
 			for (var p = 0; p < plugs.length; ++p) {
 				var outlets = level.outlets;
@@ -87,20 +94,6 @@ window.onload = function () {
 					drag = true;
 					selected = c;
 				}
-			}
-		}
-
-		var colliding = [];
-		// drag
-		if (drag) {
-			if (Mouse.down) {
-				cursor.setGrab();
-				level.cables[selected].move(mouse);
-				level.cables[selected].checkCollision(level.cables);
-			
-			// drop
-			} else {
-				drag = false;
 			}
 		}
 

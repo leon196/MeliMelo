@@ -10,7 +10,7 @@ void main () {
 	vUv = uv;
 
 	float aspect = resolution.x/resolution.y;
-	vec3 pos = position*size*2.;
+	vec3 pos = position*size*4.;
 	pos.x /= aspect;
 	pos = target-pos;
 	pos.z = .2;

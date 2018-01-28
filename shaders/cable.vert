@@ -5,6 +5,7 @@ attribute vec2 indexMap, anchor;
 attribute vec3 next, prev;
 attribute float path;
 
+uniform float time;
 uniform vec2 resolution;
 
 varying vec2 vAnchor;
@@ -24,6 +25,7 @@ void main ()
 	vec3 forward = normalize(next-position);
 	vec3 right = vec3(forward.y, -forward.x, 0);
 	right.x /= aspect;
+	right *= 1.+.4*sin(vPath*10.+time);
 	float thin = .02;
 	pos += right * anchor.x * thin;
 	pos += forward * step(-.99, anchor.y) * thin;

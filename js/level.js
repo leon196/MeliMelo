@@ -10,7 +10,7 @@ function generateLevel (scene, round) {
 	}
 
 	var outlets = [];
-	var outletCount = (1 + round)*2;
+	var outletCount = (4 + round)*2;
 	for (var c = 0; c < outletCount; ++c) {
 		outlets.push(new Outlet());
 		var p = Math.random()*2.-1.;
