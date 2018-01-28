@@ -4,6 +4,7 @@ var PI2 = Math.PI/2.;
 window.onload = function () {
 
 	var frameElapsed = 0;
+	var elapsed = 0;
 
 	var renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -12,10 +13,8 @@ window.onload = function () {
 	var scene = new THREE.Scene();
 	var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.01, 100);
 	camera.position.z = 5;
-	var level;
-	var elapsed = 0;
+	var level, cursor, ui;
 	var round = 0;
-	var cursor;
 
 	load(setup);
 
@@ -27,6 +26,9 @@ window.onload = function () {
 
 	 	cursor = new Cursor();
 	 	scene.add(cursor);
+
+	 	ui = new UI();
+	 	scene.add(ui);
 
 		document.addEventListener('keydown', Keyboard.onKeyDown);
   	document.addEventListener('keyup', Keyboard.onKeyUp);
@@ -43,6 +45,8 @@ window.onload = function () {
 		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
 		var mousex = (Mouse.x/window.innerWidth)*2.-1.;
 		var mousey = (1.-Mouse.y/window.innerHeight)*2.-1.;
+		var lastMouseX = (Mouse.lastX/window.innerWidth)*2.-1.;
+		var lastMouseY = (1.-Mouse.lastY/window.innerHeight)*2.-1.;
 		var mouse = [mousex, mousey, 0];
 		cursor.uniforms.mouse.value = mouse;
 		cursor.setDefault();
@@ -56,6 +60,7 @@ window.onload = function () {
 			
 			} else {
 				cursor.drag = false;
+				// level.cables[cursor.selected].slide([mousex-lastMouseX, mousey-lastMouseY]);
 			}
 		}
 
@@ -72,7 +77,7 @@ window.onload = function () {
 					level.cables[c].selected = pointSelected;
 				}
 			}
-			
+
 			var plugs = level.cables[c].plugs;
 			for (var p = 0; p < plugs.length; ++p) {
 				var outlets = level.outlets;

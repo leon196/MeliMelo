@@ -9,8 +9,8 @@ void main ()
 {
 	vUv = uv;
 	vUv = 1.-vUv;
-	vUv.y /= 3.;
-	vUv.y += cursorState/3.;
+	vUv.y /= 4.;
+	vUv.y += cursorState/4.;
 	float aspect = resolution.x/resolution.y;
 	vec3 pos = position*.2;
 	pos.x /= aspect;

@@ -6,6 +6,8 @@ let textureUrls = [
 	{ name:'cursor', url:'images/cursor.png' },
 	{ name:'plug', url:'images/plug.png' },
 	{ name:'outlet', url:'images/outlet.png' },
+	{ name:'title', url:'images/title.png' },
+	{ name:'subtitle', url:'images/subtitle.png' },
 ];
 let textureCount = textureUrls.length;
 
@@ -21,6 +23,10 @@ let shaderUrls = [
 	{ name:'cursor.vert', url:'shaders/cursor.vert' },
 	{ name:'outlet.frag', url:'shaders/outlet.frag' },
 	{ name:'outlet.vert', url:'shaders/outlet.vert' },
+	{ name:'title.frag', url:'shaders/title.frag' },
+	{ name:'title.vert', url:'shaders/title.vert' },
+	{ name:'subtitle.frag', url:'shaders/subtitle.frag' },
+	{ name:'subtitle.vert', url:'shaders/subtitle.vert' },
 ];
 let shaderCount = shaderUrls.length;
 

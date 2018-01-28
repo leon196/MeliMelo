@@ -2,12 +2,15 @@
 function Cable (count) {
 
 	this.lineMaxLength = .1;
-	this.lineMinLength = .05;
+	this.lineMinLength = .075;
 	this.lineAngle = .31;
 	this.minAngle = .75;
 	this.damping = .5;
 	this.hitArea = .1;
-
+	this.velocity = [0,0,0];
+	this.velocityFriction = .9;
+	this.velocitySpeed = .2;
+	this.target = [0,0,0];
 	this.selected = 0;
 
 	this.uniforms = {
@@ -85,6 +88,7 @@ function Cable (count) {
 		var dist = distance(this.points[pt][0], this.points[pt][1], this.points[pt+sens][0], this.points[pt+sens][1]);
 		var dir = direction(this.points[pt][0], this.points[pt][1], this.points[pt+sens][0], this.points[pt+sens][1]);
 		var radius = Math.min(this.lineMaxLength , Math.max(this.lineMinLength, dist));
+		var before = [this.points[pt][0], this.points[pt][1]];
 		this.points[pt][0] = this.points[pt+sens][0]-radius*dir[0]/dist;
 		this.points[pt][1] = this.points[pt+sens][1]-radius*dir[1]/dist;
 	}
@@ -104,11 +108,12 @@ function Cable (count) {
 			if (diff < Math.PI*this.minAngle) {
 				var speed = 1.-diff/(Math.PI*this.minAngle);
 				var sns = angleCP>angleCN?-1:1;
-				var dir = [Math.cos(angleCN+delta*sns*speed), Math.sin(angleCN+delta*sns*speed)];
+				// var dir = [Math.cos(angleCN+delta*sns*speed), Math.sin(angleCN+delta*sns*speed)];
+				var dir = [Math.cos(lerp(angleCN, angleCN+delta*sns*speed, .1)), Math.sin(lerp(angleCN, angleCN+delta*sns*speed, .1))];
 				next[0] = center[0] + dir[0] * distCN;
 				next[1] = center[1] + dir[1] * distCN;
 				sns *= -1;
-				dir = [Math.cos(angleCP+delta*sns*speed), Math.sin(angleCP+delta*sns*speed)];
+				dir = [Math.cos(lerp(angleCP, angleCP+delta*sns*speed, .1)), Math.sin(lerp(angleCP, angleCP+delta*sns*speed, .1))];
 				prev[0] = center[0] + dir[0] * distCP;
 				prev[1] = center[1] + dir[1] * distCP;
 			}
@@ -135,13 +140,37 @@ function Cable (count) {
 	}
 
 	this.move = function (target, delta) {
-		this.points[this.selected][0] = lerp(this.points[this.selected][0], target[0], this.damping);
-		this.points[this.selected][1] = lerp(this.points[this.selected][1], target[1], this.damping);
-		this.relax(this.selected, 1, delta);
-		this.relax(this.selected, -1, delta);
+		this.target = target;
+		var point = this.points[this.selected];
+		this.points[this.selected][0] = lerp(point[0], target[0], this.damping);
+		this.points[this.selected][1] = lerp(point[1], target[1], this.damping);
+	}
+
+	this.slide = function (velocity) {
+		this.velocity[0] += velocity[0] * this.velocitySpeed;
+		this.velocity[1] += velocity[1] * this.velocitySpeed;
 	}
 
 	this.update = function (elapsed, delta) {
+
+		// var target = this.target;
+		// var point = this.points[this.selected];
+		// var dir = direction(point[0], point[1], target[0], target[1]);
+		// var dist = distance(point[0], point[1], target[0], target[1]);
+		// if (dist > .01) {
+		// 	this.velocity[0] += dir[0] * this.velocitySpeed;
+		// 	this.velocity[1] += dir[1] * this.velocitySpeed;
+		// 	this.velocity[0] *= this.velocityFriction;
+		// 	this.velocity[1] *= this.velocityFriction;
+		// 	this.target[0] = lerp(this.target[0], this.target[0]+this.velocity[0], this.damping);
+		// 	this.target[1] = lerp(this.target[1], this.target[1]+this.velocity[1], this.damping);
+		// 	this.points[this.selected][0] = lerp(point[0], this.target[0], this.damping);
+		// 	this.points[this.selected][1] = lerp(point[1], this.target[1], this.damping);
+		// }
+		
+		this.relax(this.selected, 1, delta);
+		this.relax(this.selected, -1, delta);
+
 		for (var i = 0; i < Math.max(this.selected, this.points.length-this.selected); i++) {
 			var leftd = this.selected - i-1;
 			var rightd = this.selected + i+1;
