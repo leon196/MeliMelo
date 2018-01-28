@@ -199,13 +199,13 @@ window.onload = function () {
 							}
 							if(plugs[p].outlet != o){
 								plugs[p].outlet = o;
-								console.log("this is" + o);
+								// console.log("this is" + o);
 								var connexions = checkGlobalConnexion(o, outlets);
 								if(connexions.length == outlets.length){
 									win = true;
 								}
 								for(var x=0; x<outlets.length; x++){
-									console.log("Voisins de "+ x + "=" + outlets[x].neighbors);
+									// console.log("Voisins de "+ x + "=" + outlets[x].neighbors);
 								}
 							}
 						} else {
