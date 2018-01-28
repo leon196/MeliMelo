@@ -94,7 +94,6 @@ window.onload = function () {
 		// drag
 		if (drag) {
 			if (Mouse.down) {
-				console.log("dd");
 				cursor.setGrab();
 				level.cables[selected].move(mouse);
 				level.cables[selected].checkCollision(level.cables);
