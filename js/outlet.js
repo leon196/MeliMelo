@@ -19,6 +19,8 @@ function Outlet() {
 		fragmentShader: shaders['outlet.frag'],
 		uniforms: this.uniforms,
 		side: THREE.DoubleSide,
+		transparent: true,
+		depthTest: false,
 	})
 	THREE.Mesh.call(this, new THREE.PlaneGeometry(1, 1), material);
 

@@ -21,6 +21,7 @@ function Plug () {
 		uniforms: this.uniforms,
 		side: THREE.DoubleSide,
 		transparent: true,
+		depthTest: false,
 	})
 	// material.blending = THREE.CustomBlending;
 	// material.blendEquation = THREE.MaxEquation;
