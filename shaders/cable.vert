@@ -25,8 +25,8 @@ void main ()
 	vec3 forward = normalize(next-position);
 	vec3 right = vec3(forward.y, -forward.x, 0);
 	right.x /= aspect;
-	right *= 1.+.4*sin(vPath*10.+time);
-	float thin = .02;
+	// right *= 1.+.4*sin(vPath*10.+time);
+	float thin = .015;
 	pos += right * anchor.x * thin;
 	pos += forward * step(-.99, anchor.y) * thin;
 	pos -= forward * step(anchor.y, .99) * thin;

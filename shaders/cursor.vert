@@ -12,7 +12,7 @@ void main ()
 	vUv.y /= 3.;
 	vUv.y += cursorState/3.;
 	float aspect = resolution.x/resolution.y;
-	vec3 pos = position*.3;
+	vec3 pos = position*.2;
 	pos.x /= aspect;
 	pos = mouse-pos;
 	gl_Position = vec4(pos, 1);

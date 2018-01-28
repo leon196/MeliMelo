@@ -4,8 +4,20 @@ function Cable (count) {
 	this.lineMaxLength = .1;
 	this.lineMinLength = .05;
 	this.lineAngle = .31;
+	this.minAngle = .75;
 	this.damping = .5;
 	this.hitArea = .1;
+
+	this.selected = 0;
+
+	this.uniforms = {
+		time: { value: 0 },
+		colorA: { value: [1,1,1] },
+		colorB: { value: [1,1,1] },
+		ratioA: { value: 0 },
+		ratioB: { value: 0 },
+		resolution: { value: [window.innerWidth, window.innerHeight] },
+	};
 
 	this.points = [];
 	this.velocities = [];
@@ -34,17 +46,6 @@ function Cable (count) {
 		attributes.path.array.push(i/(this.points.length-1));
 	}
 
-	this.geometry = createGeometry(attributes);
-
-	this.uniforms = {
-		time: { value: 0 },
-		colorA: { value: [1,1,1] },
-		colorB: { value: [1,1,1] },
-		ratioA: { value: 0 },
-		ratioB: { value: 0 },
-		resolution: { value: [window.innerWidth, window.innerHeight] },
-	};
-
 	var material = new THREE.ShaderMaterial( {
 		vertexShader: shaders['cable.vert'],
 		fragmentShader: shaders['cable.frag'],
@@ -53,25 +54,26 @@ function Cable (count) {
 		transparent: true,
 		depthTest: false,
 	});
+	material.blending = THREE.CustomBlending;
+	material.blendEquation = THREE.AddEquation;
+	material.blendSrc = THREE.SrcAlphaFactor;
+	material.blendDst = THREE.OneFactor;
 
+	this.geometry = createGeometry(attributes);
 	this.mesh = new THREE.Mesh(this.geometry, material);
-
 	this.plugs = [new Plug(), new Plug()];
 	this.mesh.add(this.plugs[0], this.plugs[1]);
 	
-	this.selected = 0;
-
 	this.hitTest = function (mouse) {
 		for (var i = 0; i < this.points.length; ++i) {
 			var dist = distance(this.points[i][0], this.points[i][1], mouse[0], mouse[1]);
 			var area = this.hitArea;
 			area += (!(i==0||i==this.points.length-1)?0:this.plugs[0].size);
 			if (dist < area) {
-				this.selected = i;
-				return true;
+				return i;
 			}
 		}
-		return false;
+		return -1;
 	}
 
 	this.tractage = function(dir,dist){
@@ -86,7 +88,7 @@ function Cable (count) {
 		this.points[pt][1] = this.points[pt+sens][1]-radius*dir[1]/dist;
 	}
 
-	this.relax = function(index, sens) {
+	this.relax = function(index, sens, delta) {
 		if (index > 0 && index < this.points.length-1) {
 			var center = this.points[index];
 			var prev = this.points[index+sens*-1];
@@ -97,14 +99,14 @@ function Cable (count) {
 			var distCN = distance(next[0], next[1], center[0], center[1]);
 			var angleCP = Math.atan2(centerPrev[1], centerPrev[0]);
 			var angleCN = Math.atan2(centerNext[1], centerNext[0]);
-			if (Math.abs(angleCP-angleCN) < Math.PI*.75) {
+			if (Math.abs(angleCP-angleCN) < Math.PI*this.minAngle) {
 				// console.log('relax')
 				var sns = angleCP>angleCN?-1:1;
-				var dir = [Math.cos(angleCN+.1*sns), Math.sin(angleCN+.1*sns)];
+				var dir = [Math.cos(angleCN+delta*sns*.5), Math.sin(angleCN+delta*sns*.5)];
 				next[0] = center[0] + dir[0] * distCN;
 				next[1] = center[1] + dir[1] * distCN;
 				sns *= -1;
-				dir = [Math.cos(angleCP+.1*sns), Math.sin(angleCP+.1*sns)];
+				dir = [Math.cos(angleCP+delta*sns*.5), Math.sin(angleCP+delta*sns*.5)];
 				prev[0] = center[0] + dir[0] * distCP;
 				prev[1] = center[1] + dir[1] * distCP;
 			}
@@ -130,24 +132,24 @@ function Cable (count) {
 		}
 	}
 
-	this.move = function (target) {
+	this.move = function (target, delta) {
 		this.points[this.selected][0] = lerp(this.points[this.selected][0], target[0], this.damping);
 		this.points[this.selected][1] = lerp(this.points[this.selected][1], target[1], this.damping);
-		this.relax(this.selected, 1);
-		this.relax(this.selected, -1);
+		this.relax(this.selected, 1, delta);
+		this.relax(this.selected, -1, delta);
 	}
 
-	this.update = function (elapsed) {
+	this.update = function (elapsed, delta) {
 		for (var i = 0; i < Math.max(this.selected, this.points.length-this.selected); i++) {
 			var leftd = this.selected - i-1;
 			var rightd = this.selected + i+1;
 			if(leftd>=0){
 				this.follow(leftd,1);
-				this.relax(leftd,1);
+				this.relax(leftd,1, delta);
 			}
 			if(rightd<this.points.length){
 				this.follow(rightd,-1);
-				this.relax(rightd,-1);
+				this.relax(rightd,-1, delta);
 			}
 		}
 		this.updatePlugs();
