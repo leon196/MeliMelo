@@ -78,6 +78,14 @@ function Cable (count) {
 
 	}
 
+	this.getOtherSide = function(plug1){ // return outlet opposée ou null si pas plugged
+		if(plug1 == this.plugs[0]){
+			return this.plugs[1].outlet;
+		}
+		else{
+			return this.plugs[0].outlet;
+		}
+	}
 	this.follow = function(pt, sens){
 		var dist = distance(this.points[pt][0], this.points[pt][1], this.points[pt+sens][0], this.points[pt+sens][1]);
 		var dir = direction(this.points[pt][0], this.points[pt][1], this.points[pt+sens][0], this.points[pt+sens][1]);

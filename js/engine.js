@@ -39,6 +39,15 @@ window.onload = function () {
 		requestAnimationFrame( update );
 	}
 
+	function checkGlobalConnexion(start, connected){
+		connected.push(start);
+		for(var i = 0; i< start.neighbors.length; i++){
+			if(connected.indexOf(start.neighbors[i]) == -1){
+				connected = checkGlobalConnexion(start.neighbors[i], connected);
+			}
+		}
+		return connected;
+	}
 	function update (elapsed) {
 
 		elapsed *= .01;
@@ -64,23 +73,39 @@ window.onload = function () {
 		for (var c = 0; c < level.cables.length; ++c) {
 			level.cables[c].update(elapsed);
 			var plugs = level.cables[c].plugs;
+
 			for (var p = 0; p < plugs.length; ++p) {
 				var outlets = level.outlets;
+
 				var plugged = false;
+
 				for (var o = 0; o < outlets.length; ++o) {
 					if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
 						plugged = true;
+						outlets[o].addNeighBor(level.cables[c].getOtherSide(plugs[p]));
+						plugs[p].outlet = outlets[o];
+
 						break;
 					} else {
+						if(outlets[o].neighbors != []){
+							outlets[o].rmNeighBor(level.cables[c].getOtherSide(plugs[p]));
+						}
+						plugs[p].outlet = null;
 					}
 				}
+				var connexions = checkGlobalConnexion(outlets[0], []);
+				if(connexions.length == outlets.length){
+					console.log("ON a gagné !!! ");
+				}
+
 				if (plugged) {
 					plugs[p].ratio = Math.min(1, plugs[p].ratio + .01);
+
+
 				} else {
 					plugs[p].ratio = Math.max(0, plugs[p].ratio - .01);
 				}
 			}
-
 
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
@@ -95,6 +120,10 @@ window.onload = function () {
 					selected = c;
 				}
 			}
+
+
+
+			
 		}
 
 		for (var o = 0; o < level.outlets.length; ++o) {

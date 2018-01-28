@@ -5,7 +5,7 @@ function Plug () {
 	this.size = .1;
 	this.angle = 0.;
 	this.ratio = 0.;
-
+	this.outlet = null;
 	this.uniforms = {
 		time: { value: 0 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },

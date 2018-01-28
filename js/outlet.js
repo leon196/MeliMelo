@@ -5,7 +5,7 @@ function Outlet() {
 	this.color = [1,0,0];
 	this.size = .15;
 	this.isFull = false;
-
+	this.neighbors = [];
 	this.uniforms = {
 		time: { value: 0 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },
@@ -29,6 +29,15 @@ function Outlet() {
 				&& y > this.target[1]-this.size && y < this.target[1]+this.size;
 	}
 
+	this.addNeighBor = function(nb){
+		if(nb != null && nb != this && this.neighbors.indexOf(nb)==-1){
+			this.neighbors.push(nb);
+		}
+	}
+	this.rmNeighBor = function(nb){
+		var i = this.neighbors.indexOf(nb);
+		this.neighbors.splice(i,1);
+	}
 	this.hitTestCircle = function (x, y, size) {
 		var dist = distance(x,y,this.target[0],this.target[1]);
 		return dist < this.size;
