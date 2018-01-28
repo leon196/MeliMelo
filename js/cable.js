@@ -107,15 +107,18 @@ function Cable () {
 			var angleCN = Math.atan2(centerNext[1], centerNext[0]);
 			var diff = Math.abs(angleCP-angleCN);
 			if (diff < this.minAngle) {
-				var speed = (1.-diff/this.minAngle);
+				var speed = 5.*(1.-(diff/this.minAngle));
 				var sns = angleCP>angleCN?-1:1;
-				var dir = [Math.cos(lerp(angleCN, angleCN+delta*sns*speed, .1)), Math.sin(lerp(angleCN, angleCN+delta*sns*speed, .1))];
-				next[0] = center[0] + dir[0] * distCN;
-				next[1] = center[1] + dir[1] * distCN;
+				// var dir = [Math.cos(lerp(angleCN, angleCN+delta*sns*speed, .1)), Math.sin(lerp(angleCN, angleCN+delta*sns*speed, .1))];
+				var angle = lerp(angleCN, angleCN+delta*sns*speed, .1);
+				var dir = [Math.cos(angle), Math.sin(angle)];
+				next[0] = center[0] + dir[0] * distCN;//lerp(next[0], center[0] + dir[0] * distCN, .5);
+				next[1] = center[1] + dir[1] * distCN;//lerp(next[1], center[1] + dir[1] * distCN, .5);
 				sns *= -1;
-				dir = [Math.cos(lerp(angleCP, angleCP+delta*sns*speed, .1)), Math.sin(lerp(angleCP, angleCP+delta*sns*speed, .1))];
-				prev[0] = center[0] + dir[0] * distCP;
-				prev[1] = center[1] + dir[1] * distCP;
+				angle = lerp(angleCP, angleCP+delta*sns*speed, .1);
+				dir = [Math.cos(angle), Math.sin(angle)];
+				prev[0] = center[0] + dir[0] * distCP;//lerp(prev[0], center[0] + dir[0] * distCP, .5);
+				prev[1] = center[1] + dir[1] * distCP;//lerp(prev[1], center[1] + dir[1] * distCP, .5);
 			}
 		}
 	}
