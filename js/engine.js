@@ -106,10 +106,13 @@ window.onload = function () {
 
 			}
 
+		var colliding = [];
 		if (drag) {
 			if (Mouse.down) {
+				console.log("dd");
 				cursor.setGrab();
 				cables[selected].move(mouse);
+				cables[selected].checkCollision(cables);
 				
 			} else {
 				drag = false;

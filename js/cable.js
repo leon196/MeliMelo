@@ -70,7 +70,12 @@ function Cable (count) {
 		return false;
 	}
 
-	this.follow = function(pt, dir){
+	this.tractage = function(dir,dist){
+
+	}
+
+
+		this.follow = function(pt, dir){
 		var distl = distance(this.points[pt][0], this.points[pt][1], this.points[pt+dir][0], this.points[pt+dir][1]);
 		var dirl = direction(this.points[pt][0], this.points[pt][1], this.points[pt+dir][0], this.points[pt+dir][1]);
 		var distp = null;
@@ -96,7 +101,36 @@ function Cable (count) {
 
 		}
 	}
-	this.move = function (target) {
+
+		this.checkCollision = function(cables){
+			var seuil = 0.01;
+
+			for( var i = 0; i<cables.length; i++){ // Tous les cables
+
+				if(cables[i] != this){
+					
+					for  (var j= 0; j < this.points.length-1; j++){ // Tous mes points
+						for (var k= 0; k < cables[i].points.length; k++){ // Tous les points de c
+							var distM = distance(this.points[j][0], this.points[j][1], this.points[j+1][0], this.points[j+1][1]);
+							var centre = [distM*this.points[j][0], distM*this.points[j][1]];
+
+							//console.log("not me !")
+							var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
+							if( d < seuil){
+								console.log(d);
+								
+								console.log("colidation");
+								// return index cable + coordonnées points à bouger
+							}
+						}
+					}	
+				}
+
+			}
+		}
+
+
+		this.move = function (target) {
 		
 		// set selected
 		var delta = [this.points[this.selected][0]-target[0], this.points[this.selected][1]-target[1]];
@@ -107,6 +141,7 @@ function Cable (count) {
 		var last;
 		// follow
 		for (var i = 0; i < Math.max(this.selected, this.points.length-this.selected); i++) {
+
 			var leftd = this.selected - i-1;
 			var rightd = this.selected + i+1;
 			if(leftd>=0){
@@ -115,6 +150,7 @@ function Cable (count) {
 			if(rightd<this.points.length){
 				this.follow(rightd,-1);
 			}
+
 		}
 		
 
