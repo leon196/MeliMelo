@@ -22,7 +22,8 @@ function generateLevel (scene, round) {
 
 	var outlets = [];
 	var outletCount = cableCount+1;
-	var dimension = 4;
+
+	var dimension = 8;
 	var grid = [];
 	for (var g = 0; g < dimension*dimension; ++g) {
 		grid.push(g);
@@ -34,6 +35,7 @@ function generateLevel (scene, round) {
 		var y = (Math.floor(grid[c]/dimension)/dimension)*2.-1.;
 		x /= window.innerWidth/window.innerHeight;
 		outlet.target = [x*.8, y*.8, 0];
+		outlet.num = c;
 		outlets.push(outlet);
 		scene.add(outlet);
 	}

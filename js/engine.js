@@ -36,23 +36,62 @@ window.onload = function () {
 	 	scene.add(ui);
 
 		document.addEventListener('keydown', Keyboard.onKeyDown);
-  	document.addEventListener('keyup', Keyboard.onKeyUp);
-  	document.addEventListener('mousemove', Mouse.onMove);
-  	document.addEventListener('mousedown', Mouse.onMouseDown);
-  	document.addEventListener('mouseup', Mouse.onMouseUp);
+	  	document.addEventListener('keyup', Keyboard.onKeyUp);
+	  	document.addEventListener('mousemove', Mouse.onMove);
+	  	document.addEventListener('mousedown', Mouse.onMouseDown);
+	  	document.addEventListener('mouseup', Mouse.onMouseUp);
 
 		requestAnimationFrame( update );
 	}
 
-	function checkGlobalConnexion(start, connected){
-		connected.push(start);
-		for(var i = 0; i< start.neighbors.length; i++){
-			if(connected.indexOf(start.neighbors[i]) == -1){
-				connected = checkGlobalConnexion(start.neighbors[i], connected);
+	function checkGlobalConnexion(start, outlets){
+		var toVisit = [];
+		toVisit.push(start);
+		var visited = [];
+		var connected = [];
+		var visiting = null;
+		while(toVisit.length > 1){
+			console.log("tovisit: "+toVisit);
+			visiting = toVisit[toVisit.length-1];
+				toVisit.pop();
+				console.log("visiting " + visiting);
+				if(connected.indexOf(visiting) == -1){
+					connected.push(visiting);
+					console.log("added connected "+connected);
+				}
+				visited.push(visiting);
+				console.log(outlets[visiting].neighbors);
+				for(var i =0; i< outlets[visiting].neighbors.length; i++){
+					var neighborNum = outlets[visiting].neighbors[i].num
+					console.log("voissin="+ neighborNum);
+					if(visited.indexOf(neighborNum) == -1){
+						toVisit.push(neighborNum);
+						console.log("added "+neighborNum+" to visit");
+					}
+				}
+			}
+		return connected
+	}
+
+	function checkCollision(cables, selected){
+		var seuil = 0.05;
+		for( var i = 0; i<cables.length; i++){ // Tous les cables
+			if(i != selected){
+				for  (var j= 0; j < cables[selected].points.length-1; j++){ // Tous mes points
+					for (var k= 0; k < cables[i].points.length; k++){ // Tous les points de c
+						var distM = distance(cables[selected].points[j][0], cables[selected].points[j][1], cables[selected].points[j+1][0], cables[selected].points[j+1][1]);
+						var centre = [distM*cables[selected].points[j][0], distM*cables[selected].points[j][1]];
+						var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
+						if( d < seuil){
+							console.log("colidation");
+							// return index cable + coordonnées points à bouger
+						}
+					}
+				}	
 			}
 		}
-		return connected;
 	}
+
 	function update (elapsed) {
 
 		elapsed *= .001;
@@ -72,6 +111,7 @@ window.onload = function () {
 			resetLevel(scene, level);
 			round += 1;
 			level = generateLevel(scene, round);
+
 		}
 		
 		if (transitionIn && transitionStart + transitionDelayIn < elapsed) {
@@ -129,34 +169,41 @@ window.onload = function () {
 						level.cables[c].selected = pointSelected;
 					}
 				}
-
 				level.cables[c].update(elapsed, delta);
 
 				var plugs = level.cables[c].plugs;
 				for (var p = 0; p < plugs.length; ++p) {
 					var outlets = level.outlets;
 
-
 					var plugged = false;
 					var outletTarget = [0,0,0];
 					for (var o = 0; o < outlets.length; ++o) {
-						// outlets[o].target[0] += Math.sin(elapsed*.1)*.001;
+						
 						if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
 							plugged = true;
 							outletTarget = outlets[o].target;
-							outlets[o].addNeighBor(level.cables[c].getOtherSide(plugs[p]));
-							plugs[p].outlet = outlets[o];
-							break;
+							outlets[o].addNeighBor(plugs[1-p].outlet);
+							plugs[p].outlet = o;
+							//if(plugs[p].outlet != o){
+								// console.log("new connexion");
+								
+								var connexions = checkGlobalConnexion(o, outlets);
+								if(connexions.length == outlets.length){
+									console.log("ON a gagné !!! ");
+								}
+								// console.log("connexions depuis:" + outlets[o].num + ":" + connexions);
+							//}
+
+							//break;
 						} else {
-							if(outlets[o].neighbors != []){
-								outlets[o].rmNeighBor(level.cables[c].getOtherSide(plugs[p]));
+							if(plugs[p].outlet == o){
+								plugs[p].outlet = null;
+								outlets[o].rmNeighBor(plugs[1-p].outlet);
 							}
-							plugs[p].outlet = null;
+								
+							
 						}
-					}
-					var connexions = checkGlobalConnexion(outlets[0], []);
-					if(connexions.length == outlets.length){
-						console.log("ON a gagné !!! ");
+					
 					}
 
 					if (plugged) {
@@ -204,5 +251,4 @@ window.onload = function () {
 		frameElapsed = elapsed;
 		requestAnimationFrame( update );
 	}
-
 }
