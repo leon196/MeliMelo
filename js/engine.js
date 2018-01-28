@@ -90,24 +90,16 @@ window.onload = function () {
 			}
 		}
 
-<<<<<<< HEAD
 		var colliding = [];
-=======
 		// drag
->>>>>>> origin/master
 		if (drag) {
 			if (Mouse.down) {
 				console.log("dd");
 				cursor.setGrab();
-<<<<<<< HEAD
-				cables[selected].move(mouse);
-				cables[selected].checkCollision(cables);
-				
-=======
 				level.cables[selected].move(mouse);
+				level.cables[selected].checkCollision(level.cables);
 			
 			// drop
->>>>>>> origin/master
 			} else {
 				drag = false;
 			}
