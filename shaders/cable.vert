@@ -6,6 +6,7 @@ attribute vec3 next, prev;
 attribute float path;
 
 uniform float time;
+uniform float segments;
 uniform vec2 resolution;
 
 varying vec2 vAnchor;
@@ -16,7 +17,7 @@ void main ()
 	vAnchor = anchor;
 	float aspect = resolution.x/resolution.y;
 	float y = anchor.y*.5+.5;
-	vPath = path-y/10.;
+	vPath = path-y/segments;
 	vec3 pos = mix(position, next, y);
 	// float y = anchor.y;
 	// vec3 pos = mix(position, next, max(0., anchor.y));
@@ -26,7 +27,7 @@ void main ()
 	vec3 right = vec3(forward.y, -forward.x, 0);
 	right.x /= aspect;
 	// right *= 1.+.4*sin(vPath*10.+time);
-	float thin = .015;
+	float thin = .01;
 	pos += right * anchor.x * thin;
 	pos += forward * step(-.99, anchor.y) * thin;
 	pos -= forward * step(anchor.y, .99) * thin;

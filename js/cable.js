@@ -17,6 +17,7 @@ function Cable (count) {
 		ratioA: { value: 0 },
 		ratioB: { value: 0 },
 		resolution: { value: [window.innerWidth, window.innerHeight] },
+		segments: { value: count },
 	};
 
 	this.points = [];
@@ -99,14 +100,15 @@ function Cable (count) {
 			var distCN = distance(next[0], next[1], center[0], center[1]);
 			var angleCP = Math.atan2(centerPrev[1], centerPrev[0]);
 			var angleCN = Math.atan2(centerNext[1], centerNext[0]);
-			if (Math.abs(angleCP-angleCN) < Math.PI*this.minAngle) {
-				// console.log('relax')
+			var diff = Math.abs(angleCP-angleCN);
+			if (diff < Math.PI*this.minAngle) {
+				var speed = 1.-diff/(Math.PI*this.minAngle);
 				var sns = angleCP>angleCN?-1:1;
-				var dir = [Math.cos(angleCN+delta*sns*.5), Math.sin(angleCN+delta*sns*.5)];
+				var dir = [Math.cos(angleCN+delta*sns*speed), Math.sin(angleCN+delta*sns*speed)];
 				next[0] = center[0] + dir[0] * distCN;
 				next[1] = center[1] + dir[1] * distCN;
 				sns *= -1;
-				dir = [Math.cos(angleCP+delta*sns*.5), Math.sin(angleCP+delta*sns*.5)];
+				dir = [Math.cos(angleCP+delta*sns*speed), Math.sin(angleCP+delta*sns*speed)];
 				prev[0] = center[0] + dir[0] * distCP;
 				prev[1] = center[1] + dir[1] * distCP;
 			}

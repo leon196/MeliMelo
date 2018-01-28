@@ -60,6 +60,19 @@ window.onload = function () {
 		}
 
 		for (var c = 0; c < level.cables.length; ++c) {
+
+			// hit test
+			var pointSelected = level.cables[c].hitTest(mouse);
+			if (!cursor.drag && pointSelected != -1) {
+				cursor.setHover();
+				// grab
+				if (Mouse.down) {
+					cursor.drag = true;
+					cursor.selected = c;
+					level.cables[c].selected = pointSelected;
+				}
+			}
+			
 			var plugs = level.cables[c].plugs;
 			for (var p = 0; p < plugs.length; ++p) {
 				var outlets = level.outlets;
@@ -91,18 +104,6 @@ window.onload = function () {
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
 			// }
-
-			// hit test
-			var pointSelected = level.cables[c].hitTest(mouse);
-			if (!cursor.drag && pointSelected != -1) {
-				cursor.setHover();
-				// grab
-				if (Mouse.down) {
-					cursor.drag = true;
-					cursor.selected = c;
-					level.cables[c].selected = pointSelected;
-				}
-			}
 		}
 
 		for (var o = 0; o < level.outlets.length; ++o) {
