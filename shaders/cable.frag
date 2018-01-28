@@ -9,11 +9,13 @@ void main ()
 {
 	// float shade = sin((vAnchor.x*.5+.5)*3.14159);
 	// shade = 1.;
-	float alpha = 1.-abs(vAnchor.x);
+	// float alpha = 1.-abs(vAnchor.x);
+	float alpha = .5/abs(vAnchor.x);
 	float y = abs(abs((vAnchor.y))-1.)/.1;
+	alpha = smoothstep(.2, 1., alpha);
+	alpha *= clamp(y*(1.-abs(vAnchor.x)), 0., 1.);
 	// y = mix(y, 1., smoothstep(1.,2., ratioA+ratioB));
-	alpha *= y;
-	alpha = smoothstep(.2,.5, alpha);
+	// alpha = smoothstep(.2,.5, alpha);
 	// if (shade < .5) { discard; }
 	// shade = smoothstep(.0,.5,shade);
 	// float t = .5+.5*sin(time);

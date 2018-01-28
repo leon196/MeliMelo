@@ -87,8 +87,9 @@ window.onload = function () {
 				}
 			}
 
-			var plugs = level.cables[c].plugs;
+			level.cables[c].update(elapsed, delta);
 
+			var plugs = level.cables[c].plugs;
 			for (var p = 0; p < plugs.length; ++p) {
 				var outlets = level.outlets;
 
@@ -117,20 +118,23 @@ window.onload = function () {
 					plugs[p].ratio = Math.min(1, plugs[p].ratio + .01);
 					var points = level.cables[c].points;
 					var index = p*(points.length-1);
-					// level.cables[c].move(outletTarget, delta);
-					points[index][0] = lerp(points[index][0], outletTarget[0], .1);
-					points[index][1] = lerp(points[index][1], outletTarget[1], .1);
+					level.cables[c].moveAt(index, outletTarget, delta);
+					// points[index][0] = lerp(points[index][0], outletTarget[0], .1);
+					// points[index][1] = lerp(points[index][1], outletTarget[1], .1);
 					// level.cables[c].selected = index;
 				} else {
 					plugs[p].ratio = Math.max(0, plugs[p].ratio - .01);
 				}
 			}
+			
+			level.cables[c].updatePlugs();
+			level.cables[c].updateGeometry();
+			level.cables[c].updateUniforms(elapsed);
 
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
 			// }
 
-			level.cables[c].update(elapsed, delta);
 
 			// if(plugA.ratio >= 1	&& plugB.ratio >=1){
 			// 	console.log("wouhou bravo");
