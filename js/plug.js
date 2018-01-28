@@ -1,7 +1,7 @@
 
 function Plug () {
 
-	this.target = [0,0];
+	this.target = [0,0,0];
 	this.size = .05;
 	this.angle = 0.;
 	this.ratio = 0.;
