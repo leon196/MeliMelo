@@ -21,7 +21,7 @@ window.onload = function () {
 	var transitionDelayIn = 1.;
 	var transitionDelay = 10;
 	var transitionStart = 0.;
-
+	var transitionCanceled = false;
 	load(setup);
 
 	function setup () {
@@ -41,17 +41,12 @@ window.onload = function () {
 		document.addEventListener('mousemove', Mouse.onMove);
 		document.addEventListener('mousedown', Mouse.onMouseDown);
 		document.addEventListener('mouseup', Mouse.onMouseUp);
-		document.addEventListener('touchmove', Mouse.onTouchMove);
-		document.addEventListener('touchstart', Mouse.onTouchDown);
-		document.addEventListener('touchend', Mouse.onTouchUp);
+		document.addEventListener('touchmove', Mouse.onTouchMove, {passive: false});
+		document.addEventListener('touchstart', Mouse.onTouchDown, {passive: false});
+		document.addEventListener('touchend', Mouse.onTouchUp, {passive: false});
 		window.addEventListener('resize', resize, false);
 
 		requestAnimationFrame( update );
-	}
-
-	function checkVictory () {
-		level.outlets.forEach(function(outlet){
-		})
 	}
 
 	function checkGlobalConnexion(start, outlets){
@@ -79,7 +74,7 @@ window.onload = function () {
 		return connected;
 	}
 
-	function checkCollision(cables, selected){
+/*	function checkCollision(cables, selected){
 		var seuil = 0.05;
 		for( var i = 0; i<cables.length; i++){ // Tous les cables
 			if(i != selected){
@@ -89,17 +84,19 @@ window.onload = function () {
 						var centre = [distM*cables[selected].points[j][0], distM*cables[selected].points[j][1]];
 						var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
 						if( d < seuil){
-							console.log("colidation");
+							//console.log("colidation");
 							// return index cable + coordonnées points à bouger
 						}
 					}
 				}	
 			}
 		}
+	}*/
+
+	function skipTransition(){
+		transitionCanceled = true;
 	}
-
 	function update (elapsed) {
-
 		elapsed *= .001;
 		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
 		var mousex = (Mouse.x/window.innerWidth)*2.-1.;
@@ -113,17 +110,19 @@ window.onload = function () {
 		var plugRatioTotal = 0;
 		var plugCount = 0;
 
-		if (transitionOut && transitionStart + transitionDelay < elapsed) {
+		if (transitionCanceled || (transitionOut && transitionStart + transitionDelay < elapsed)) {
 			transitionOut = false;
 			transitionIn = true;
 			transitionStart = elapsed;
 			resetLevel(scene, level);
 			round += 1;
 			level = generateLevel(scene, round);
-
+			document.getElementById("levelCount").innerHTML = round+1;
+			document.removeEventListener("mousedown", skipTransition);
+			document.removeEventListener("touchstart", skipTransition);
+			transitionCanceled = false;
 		}
 		
-
 		if (transitionIn && transitionStart + transitionDelayIn < elapsed) {
 			transitionIn = false;
 		}
@@ -147,7 +146,6 @@ window.onload = function () {
 		}
 
 		if (transitionIn == false && transitionOut == false) {
-
 			var colliding = [];
 			if (cursor.drag) {
 				if (Mouse.down) {
@@ -199,13 +197,9 @@ window.onload = function () {
 							}
 							if(plugs[p].outlet != o){
 								plugs[p].outlet = o;
-								// console.log("this is" + o);
 								var connexions = checkGlobalConnexion(o, outlets);
 								if(connexions.length == outlets.length){
 									win = true;
-								}
-								for(var x=0; x<outlets.length; x++){
-									// console.log("Voisins de "+ x + "=" + outlets[x].neighbors);
 								}
 							}
 						} else {
@@ -286,6 +280,9 @@ window.onload = function () {
 			win = false;
 			transitionOut = true;
 			transitionStart = elapsed;
+			transitionCanceled = false;
+			document.addEventListener("mousedown", skipTransition);
+			document.addEventListener("touchstart", skipTransition);
 		}
 
 		renderer.render( scene, camera );
