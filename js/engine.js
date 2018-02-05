@@ -74,28 +74,10 @@ window.onload = function () {
 		return connected;
 	}
 
-/*	function checkCollision(cables, selected){
-		var seuil = 0.05;
-		for( var i = 0; i<cables.length; i++){ // Tous les cables
-			if(i != selected){
-				for  (var j= 0; j < cables[selected].points.length-1; j++){ // Tous mes points
-					for (var k= 0; k < cables[i].points.length; k++){ // Tous les points de c
-						var distM = distance(cables[selected].points[j][0], cables[selected].points[j][1], cables[selected].points[j+1][0], cables[selected].points[j+1][1]);
-						var centre = [distM*cables[selected].points[j][0], distM*cables[selected].points[j][1]];
-						var d = distance(cables[i].points[k][0], cables[i].points[k][1] , centre[0], centre[1]);
-						if( d < seuil){
-							//console.log("colidation");
-							// return index cable + coordonnées points à bouger
-						}
-					}
-				}	
-			}
-		}
-	}*/
-
 	function skipTransition(){
 		transitionCanceled = true;
 	}
+	
 	function update (elapsed) {
 		elapsed *= .001;
 		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
@@ -117,7 +99,6 @@ window.onload = function () {
 			resetLevel(scene, level);
 			round += 1;
 			level = generateLevel(scene, round);
-			document.getElementById("levelCount").innerHTML = round+1;
 			document.removeEventListener("mousedown", skipTransition);
 			document.removeEventListener("touchstart", skipTransition);
 			transitionCanceled = false;
@@ -158,12 +139,10 @@ window.onload = function () {
 						level.cables[selected].move([mouse[0]+x,mouse[1]+y,0], delta);
 						++s;
 					})
-					// level.cables[selected].checkCollision(level.cables);
 
 				} else {
 					cursor.drag = false;
 					cursor.selecteds = [];
-					// level.cables[cursor.selected].slide([mousex-lastMouseX, mousey-lastMouseY]);
 				}
 			}
 
@@ -171,7 +150,6 @@ window.onload = function () {
 
 			for (var c = 0; c < level.cables.length; ++c) {
 
-				// hit test
 				var pointSelected = level.cables[c].hitTest(mouse);
 				if (!cursor.drag && pointSelected != -1) {
 					cursor.setHover();
@@ -233,13 +211,10 @@ window.onload = function () {
 					plugCount += 1;
 				}
 
-
-
 				level.cables[c].updatePlugs();
 				level.cables[c].updateGeometry();
 				level.cables[c].updateUniforms(elapsed);
 			}
-
 
 			for (var o = 0; o < level.outlets.length; ++o) {
 				level.outlets[o].updateUniforms(elapsed);
@@ -261,7 +236,6 @@ window.onload = function () {
 			var fadeOut = 1.-smoothstep(.9,1.,ratio);
 			level.outlets.forEach(function(outlet){
 				outlet.updateUniforms(elapsed);
-				// outlet.uniforms.size.value = outlet.size * (1.-ratio);
 				outlet.uniforms.alpha.value = fadeOut;
 			})
 			level.cables.forEach(function(cable){
