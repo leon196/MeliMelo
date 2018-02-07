@@ -77,10 +77,10 @@ window.onload = function () {
 	function skipTransition(){
 		transitionCanceled = true;
 	}
-	
+
 	function update (elapsed) {
 		elapsed *= .001;
-		var delta = Math.max(0, Math.min(1, elapsed - frameElapsed));
+		var delta = Math.max(0, Math.min(.01, elapsed - frameElapsed));
 		var mousex = (Mouse.x/window.innerWidth)*2.-1.;
 		var mousey = (1.-Mouse.y/window.innerHeight)*2.-1.;
 		var lastMouseX = (Mouse.lastX/window.innerWidth)*2.-1.;
@@ -103,11 +103,11 @@ window.onload = function () {
 			document.removeEventListener("touchstart", skipTransition);
 			transitionCanceled = false;
 		}
-		
+
 		if (transitionIn && transitionStart + transitionDelayIn < elapsed) {
 			transitionIn = false;
 		}
-		
+
 		if (transitionIn && transitionStart + transitionDelayIn > elapsed) {
 			var ratio = Math.max(0, Math.min(1, (elapsed-transitionStart)/transitionDelayIn));
 			level.outlets.forEach(function(outlet){
@@ -165,7 +165,7 @@ window.onload = function () {
 					var plugged = false;
 					var outletTarget = [0,0,0];
 					for (var o = 0; o < outlets.length; ++o) {
-						
+
 						if (outlets[o].hitTestCircle(plugs[p].target[0], plugs[p].target[1], plugs[p].size)) {
 							plugged = true;
 							outletTarget = outlets[o].target;
@@ -230,7 +230,7 @@ window.onload = function () {
 				}
 			}
 		}
-		
+
 		if (transitionOut && transitionStart + transitionDelay > elapsed) {
 			var ratio = Math.max(0, Math.min(1, (elapsed-transitionStart)/transitionDelay));
 			var fadeOut = 1.-smoothstep(.9,1.,ratio);

@@ -25,7 +25,7 @@ function Cable () {
 	this.setup = function () {
 
 		this.uniforms.segments.value = this.points.length;
-	
+
 		var attributes = {
 			position: { array: [], itemSize: 3 },
 			next: { array: [], itemSize: 3 },
@@ -59,7 +59,7 @@ function Cable () {
 		this.plugs = [new Plug(), new Plug()];
 		this.mesh.add(this.plugs[0], this.plugs[1]);
 	}
-	
+
 	this.hitTest = function (mouse) {
 		for (var i = 0; i < this.points.length; ++i) {
 			var dist = distance(this.points[i][0], this.points[i][1], mouse[0], mouse[1]);
@@ -182,19 +182,19 @@ function Cable () {
 		var point = this.points[index];
 		this.points[index][0] = lerp(point[0], target[0], .1);
 		this.points[index][1] = lerp(point[1], target[1], .1);
-		this.relax(index, 1, delta);
-		this.relax(index, -1, delta);
+		// this.relax(index, 1, delta);
+		// this.relax(index, -1, delta);
 
 		for (var i = 0; i < Math.max(index, this.points.length-index); i++) {
 			var leftd = index - i-1;
 			var rightd = index + i+1;
 			if(leftd>=0){
 				this.follow(leftd,1);
-				this.relax(leftd,1, delta);
+				// this.relax(leftd,1, delta);
 			}
 			if(rightd<this.points.length){
 				this.follow(rightd,-1);
-				this.relax(rightd,-1, delta);
+				// this.relax(rightd,-1, delta);
 			}
 		}
 	}
